@@ -1,0 +1,1 @@
+import{abilityMod}from'./abilities.js';export function saveDC(state){return 8+state.player.pb+abilityMod(state.blinkDog.abilities.dex);}

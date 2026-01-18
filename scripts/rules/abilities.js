@@ -1,0 +1,1 @@
+export function abilityMod(s){return Math.floor((s-10)/2);}

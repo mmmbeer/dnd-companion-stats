@@ -1,0 +1,1 @@
+export function proficiencyBonus(l){return 2+Math.floor((l-1)/4);}

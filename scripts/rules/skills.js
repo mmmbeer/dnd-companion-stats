@@ -1,0 +1,1 @@
+import{abilityMod}from'./abilities.js';export function skillBonus(state,ability,skill){const base=abilityMod(state.blinkDog.abilities[ability]);const pb=state.player.pb;if(!skill)return base;if(skill.expertise)return base+pb*2;if(skill.proficient)return base+pb;return base;}
