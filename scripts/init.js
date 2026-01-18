@@ -22,6 +22,7 @@ import { renderSummary } from './ui/renderSummary.js';
 import { renderEmptyState } from './ui/renderEmptyState.js';
 import { openAddCompanionModal } from './ui/modals/addCompanionModal.js';
 import { openAdvancementModal } from './ui/modals/advancementModal.js';
+import { getRandomCompanionName } from './data/nameRandomizer.js';
 
 const AVAILABLE_THEMES = new Set([
   'arcane-midnight',
@@ -35,6 +36,7 @@ let state = null;
 let defaultCompanionTypeId = null;
 let companionSelect = null;
 let companionNameInput = null;
+let randomizeNameButton = null;
 let newCompanionButton = null;
 let deleteCompanionButton = null;
 let playerLevelInput = null;
@@ -189,6 +191,9 @@ function renderCompanionRoster() {
   const hasCompanions = companions.length > 0;
   companionSelect.disabled = !hasCompanions;
   companionNameInput.disabled = !hasCompanions;
+  if (randomizeNameButton) {
+    randomizeNameButton.disabled = !hasCompanions;
+  }
   if (playerLevelInput) {
     playerLevelInput.disabled = !hasCompanions;
   }
@@ -207,6 +212,21 @@ function setCompanionViewVisibility(hasCompanion) {
   if (emptyStatePanel) emptyStatePanel.classList.toggle('is-hidden', hasCompanion);
   if (abilitiesPanel) abilitiesPanel.classList.toggle('is-hidden', !hasCompanion);
   if (sheetBody) sheetBody.classList.toggle('is-hidden', !hasCompanion);
+}
+
+function setActiveCompanionName(value) {
+  const activeCompanion = getActiveCompanion(state);
+  if (!activeCompanion) return;
+  const trimmed = value.trim();
+  activeCompanion.name = trimmed || getBaseCompanionName(activeCompanion.type);
+  if (companionNameInput) {
+    companionNameInput.value = activeCompanion.name;
+  }
+  const selectedOption = companionSelect?.options[companionSelect.selectedIndex];
+  if (selectedOption) {
+    selectedOption.textContent = formatCompanionOption(activeCompanion);
+  }
+  saveState(state, { validateState });
 }
 
 function getAddCompanionDefaults(typeId) {
@@ -321,6 +341,7 @@ function openAddCompanionFlow() {
 function setupCompanionControls() {
   companionSelect = document.getElementById('companionSelect');
   companionNameInput = document.getElementById('companionName');
+  randomizeNameButton = document.getElementById('randomizeCompanionName');
   newCompanionButton = document.getElementById('newCompanion');
   deleteCompanionButton = document.getElementById('deleteCompanion');
   playerLevelInput = document.getElementById('playerLevel');
@@ -334,15 +355,18 @@ function setupCompanionControls() {
   };
 
   companionNameInput.oninput = (event) => {
-    const activeCompanion = getActiveCompanion(state);
-    const trimmed = event.target.value.trim();
-    activeCompanion.name = trimmed || getBaseCompanionName(activeCompanion.type);
-    const selectedOption = companionSelect.options[companionSelect.selectedIndex];
-    if (selectedOption) {
-      selectedOption.textContent = formatCompanionOption(activeCompanion);
-    }
-    saveState(state, { validateState });
+    setActiveCompanionName(event.target.value);
   };
+
+  if (randomizeNameButton) {
+    randomizeNameButton.onclick = () => {
+      const activeCompanion = getActiveCompanion(state);
+      if (!activeCompanion) return;
+      const randomName = getRandomCompanionName(activeCompanion.type)
+        ?? getBaseCompanionName(activeCompanion.type);
+      setActiveCompanionName(randomName);
+    };
+  }
 
   newCompanionButton.onclick = () => {
     openAddCompanionFlow();

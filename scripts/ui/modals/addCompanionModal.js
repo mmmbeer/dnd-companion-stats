@@ -1,4 +1,5 @@
 import { openModal } from './modal.js';
+import { getRandomCompanionName } from '../../data/nameRandomizer.js';
 
 function clampLevel(value) {
   const level = Number(value);
@@ -47,6 +48,16 @@ export function openAddCompanionModal({
   nameInput.value = defaultName || '';
   nameField.append(nameLabel, nameInput);
 
+  const nameRow = document.createElement('div');
+  nameRow.className = 'field-row';
+  nameRow.append(nameField);
+
+  const randomizeNameButton = document.createElement('button');
+  randomizeNameButton.type = 'button';
+  randomizeNameButton.className = 'button-secondary';
+  randomizeNameButton.textContent = 'Randomize';
+  nameRow.append(randomizeNameButton);
+
   const levelField = document.createElement('label');
   levelField.className = 'field';
   const levelLabel = document.createElement('span');
@@ -58,7 +69,7 @@ export function openAddCompanionModal({
   levelInput.value = String(defaultPlayerLevel ?? 1);
   levelField.append(levelLabel, levelInput);
 
-  body.append(typeField, nameField, levelField);
+  body.append(typeField, nameRow, levelField);
 
   const modal = openModal({
     title: 'Add Companion',
@@ -99,6 +110,16 @@ export function openAddCompanionModal({
   });
 
   nameInput.addEventListener('input', () => {
+    nameTouched = true;
+    updateConfirmState();
+  });
+
+  randomizeNameButton.addEventListener('click', () => {
+    const randomName = getRandomCompanionName(selectedTypeId)
+      ?? nameForType?.(selectedTypeId)
+      ?? '';
+    if (!randomName) return;
+    nameInput.value = randomName;
     nameTouched = true;
     updateConfirmState();
   });
