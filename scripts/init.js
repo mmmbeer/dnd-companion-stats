@@ -11,7 +11,6 @@ import { getCompanionType, listCompanionTypes } from './companions/registry.js';
 import { applyAdvancement, getAdvancementContext } from './rules/advancement.js';
 import { buildCompanionView } from './rules/view.js';
 import { renderAbilities } from './ui/renderAbilities.js';
-import { renderAdvancement } from './ui/renderAdvancement.js';
 import { renderStats } from './ui/renderStats.js';
 import { renderSkills } from './ui/renderSkills.js';
 import { renderFeatures } from './ui/renderFeatures.js';
@@ -39,6 +38,7 @@ let randomizeNameButton = null;
 let newCompanionButton = null;
 let deleteCompanionButton = null;
 let playerLevelInput = null;
+let levelUpButton = null;
 let emptyStatePanel = null;
 let abilitiesPanel = null;
 let sheetBody = null;
@@ -52,6 +52,7 @@ function render() {
   if (!companion) {
     setCompanionViewVisibility(false);
     updateTopbarTitle();
+    updateLevelUpButton();
     renderEmptyState(openAddCompanionFlow);
     saveState(state, { validateState });
     return;
@@ -78,7 +79,7 @@ function render() {
   renderSkills(view);
   renderStats(view);
   renderFeatures(view);
-  renderAdvancement(view, (action) => applyAdvancementAction(companion, companionType, action));
+  updateLevelUpButton(view.advancement);
   saveState(state, { validateState });
 }
 
@@ -199,6 +200,9 @@ function renderCompanionRoster() {
   if (playerLevelInput) {
     playerLevelInput.disabled = !hasCompanions;
   }
+  if (levelUpButton) {
+    levelUpButton.disabled = !hasCompanions;
+  }
   deleteCompanionButton.disabled = companions.length <= 1;
 
   if (hasCompanions) {
@@ -214,6 +218,13 @@ function setCompanionViewVisibility(hasCompanion) {
   if (emptyStatePanel) emptyStatePanel.classList.toggle('is-hidden', hasCompanion);
   if (abilitiesPanel) abilitiesPanel.classList.toggle('is-hidden', !hasCompanion);
   if (sheetBody) sheetBody.classList.toggle('is-hidden', !hasCompanion);
+}
+
+function updateLevelUpButton(advancement) {
+  if (!levelUpButton) return;
+  const isReady = Boolean(advancement?.type && advancement?.canAdvance);
+  levelUpButton.classList.toggle('is-hidden', !isReady);
+  levelUpButton.classList.toggle('is-glowing', isReady);
 }
 
 function updateTopbarTitle(companion, companionType) {
@@ -364,6 +375,7 @@ function setupCompanionControls() {
   newCompanionButton = document.getElementById('newCompanion');
   deleteCompanionButton = document.getElementById('deleteCompanion');
   playerLevelInput = document.getElementById('playerLevel');
+  levelUpButton = document.getElementById('levelUpButton');
   emptyStatePanel = document.getElementById('emptyState');
   abilitiesPanel = document.getElementById('abilities');
   sheetBody = document.querySelector('.sheet-body');
@@ -386,6 +398,23 @@ function setupCompanionControls() {
       const randomName = getRandomCompanionName(activeCompanion.type)
         ?? getBaseCompanionName(activeCompanion.type);
       setActiveCompanionName(randomName);
+    };
+  }
+
+  if (levelUpButton) {
+    levelUpButton.onclick = () => {
+      const activeCompanion = getActiveCompanion(state);
+      if (!activeCompanion) return;
+      const companionType = getCompanionType(activeCompanion.type);
+      if (!companionType) return;
+      const context = getAdvancementContext(activeCompanion, companionType, state.player.level);
+      if (!context.type || !context.canAdvance) return;
+      openAdvancementModal({
+        companionName: activeCompanion.name,
+        advancement: context,
+        onConfirm: (action) => applyAdvancementAction(activeCompanion, companionType, action),
+        onCancel: () => render()
+      });
     };
   }
 

@@ -54,12 +54,13 @@ export function openAddCompanionModal({
 
   const randomizeNameButton = document.createElement('button');
   randomizeNameButton.type = 'button';
-  randomizeNameButton.className = 'button-secondary button-icon';
+  randomizeNameButton.className = 'button-secondary button-icon button-icon-only';
+  randomizeNameButton.title = 'Randomize Name';
+  randomizeNameButton.setAttribute('aria-label', 'Randomize Name');
   const randomizeIcon = document.createElement('span');
   randomizeIcon.className = 'icon icon-random';
   randomizeIcon.setAttribute('aria-hidden', 'true');
-  const randomizeLabel = document.createTextNode('Randomize');
-  randomizeNameButton.append(randomizeIcon, randomizeLabel);
+  randomizeNameButton.append(randomizeIcon);
   nameRow.append(randomizeNameButton);
 
   const levelField = document.createElement('label');

@@ -98,6 +98,10 @@ button {
   gap: var(--space-2);
 }
 
+.button-icon-only {
+  padding: 0.35rem 0.55rem;
+}
+
 .icon {
   display: inline-block;
   width: 1rem;
@@ -121,6 +125,16 @@ button {
 .icon-close {
   mask-image: url('../assets/icons/close.svg');
   -webkit-mask-image: url('../assets/icons/close.svg');
+}
+
+.icon-new {
+  mask-image: url('../assets/icons/new.svg');
+  -webkit-mask-image: url('../assets/icons/new.svg');
+}
+
+.icon-level-up {
+  mask-image: url('../assets/icons/level-up.svg');
+  -webkit-mask-image: url('../assets/icons/level-up.svg');
 }
 
 .icon-proficient {
@@ -403,6 +417,21 @@ button:disabled {
 .skill-tag .icon {
   width: 0.75rem;
   height: 0.75rem;
+}
+
+.player-level-row {
+  align-items: center;
+}
+
+.player-level-input {
+  width: 3.25rem;
+  text-align: center;
+}
+
+.level-up-button.is-glowing {
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
 }
 
 .feature-entry {

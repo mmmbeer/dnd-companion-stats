@@ -23,21 +23,26 @@
             <span>Name</span>
             <input id="companionName" type="text" maxlength="40">
           </label>
-          <button id="randomizeCompanionName" type="button" class="button-secondary button-icon">
+          <button id="randomizeCompanionName" type="button" class="button-secondary button-icon button-icon-only" title="Randomize Name" aria-label="Randomize Name">
             <span class="icon icon-random" aria-hidden="true"></span>
-            Randomize
           </button>
         </div>
         <div class="topbar-actions">
-          <button id="newCompanion" type="button">+ New Companion</button>
-          <button id="deleteCompanion" type="button" class="button-secondary button-icon">
+          <button id="newCompanion" type="button" class="button-icon button-icon-only" title="New companion" aria-label="New companion">
+            <span class="icon icon-new" aria-hidden="true"></span>
+          </button>
+          <button id="deleteCompanion" type="button" class="button-secondary button-icon button-icon-only" title="Delete companion" aria-label="Delete companion">
             <span class="icon icon-trash" aria-hidden="true"></span>
-            Delete
           </button>
         </div>
-        <label class="field field-inline">
+        <label class="field field-inline player-level-field">
           <span>Player Level</span>
-          <input id="playerLevel" type="number" min="1" max="20">
+          <div class="field-row player-level-row">
+            <input id="playerLevel" class="player-level-input" type="number" min="1" max="20">
+            <button id="levelUpButton" type="button" class="button-secondary button-icon button-icon-only level-up-button is-hidden" title="Level up" aria-label="Level up">
+              <span class="icon icon-level-up" aria-hidden="true"></span>
+            </button>
+          </div>
         </label>
         <label class="field field-inline">
           <span>Theme</span>
@@ -64,7 +69,6 @@
       <div class="sheet-main">
         <section class="panel stats-panel" id="stats"></section>
         <section class="panel features-panel" id="features"></section>
-        <section class="panel advancement-panel" id="advancement"></section>
       </div>
     </main>
   </div>
