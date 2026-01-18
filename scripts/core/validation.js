@@ -72,7 +72,14 @@ export function validateState(state) {
     }
   }
 
-  if (typeof state.activeCompanionId !== 'string') {
+  const companionCount = isPlainObject(state.companions)
+    ? Object.keys(state.companions).length
+    : 0;
+  if (companionCount === 0) {
+    if (state.activeCompanionId !== null) {
+      addError(errors, 'state.activeCompanionId must be null when no companions exist.');
+    }
+  } else if (typeof state.activeCompanionId !== 'string') {
     addError(errors, 'state.activeCompanionId must be a string.');
   } else if (state.companions && !state.companions[state.activeCompanionId]) {
     addError(errors, 'state.activeCompanionId must reference an existing companion.');

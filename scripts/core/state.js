@@ -30,19 +30,14 @@ export function createDefaultState(defaultTypeId, defaultCompanionName) {
     version: STATE_VERSION,
     theme: 'arcane-midnight',
     player: {
-      level: 4
+      level: 1
     },
-    companions: {
-      [DEFAULT_COMPANION_ID]: createCompanionInstance(
-        DEFAULT_COMPANION_ID,
-        defaultTypeId,
-        defaultCompanionName
-      )
-    },
-    activeCompanionId: DEFAULT_COMPANION_ID
+    companions: {},
+    activeCompanionId: null
   };
 }
 
 export function getActiveCompanion(state) {
-  return state.companions[state.activeCompanionId];
+  if (!state?.activeCompanionId) return null;
+  return state.companions[state.activeCompanionId] || null;
 }

@@ -7,7 +7,7 @@ const CATEGORY_LABELS = {
   specialSkills: 'Skills'
 };
 
-export function openAdvancementModal({ companionName, advancement, onConfirm }) {
+export function openAdvancementModal({ companionName, advancement, onConfirm, onCancel }) {
   let selectedAbility = null;
   let selectedCategory = null;
   let selectedChoice = null;
@@ -26,7 +26,8 @@ export function openAdvancementModal({ companionName, advancement, onConfirm }) 
         const actionType = categoryToActionType(selectedCategory);
         onConfirm({ type: actionType, value: selectedChoice });
       }
-    }
+    },
+    onCancel
   });
 
   modal.setConfirmEnabled(false);

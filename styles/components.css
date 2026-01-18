@@ -96,6 +96,38 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.is-hidden {
+  display: none;
+}
+
+.empty-state-panel {
+  max-width: var(--sheet-max);
+  width: 100%;
+  margin: var(--space-5) auto var(--space-4);
+  text-align: center;
+}
+
+.empty-state-body {
+  margin: var(--space-3) 0;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+}
+
+.empty-state-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.modal-form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.modal-form .field {
+  gap: var(--space-1);
+}
+
 .button-primary {
   background: var(--accent);
   border-color: var(--accent);

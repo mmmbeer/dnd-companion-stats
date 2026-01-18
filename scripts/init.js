@@ -7,8 +7,8 @@ import {
 import { loadState, saveState } from './core/storage.js';
 import { validateState } from './core/validation.js';
 import { loadCompanionTypes } from './companions/loader.js';
-import { getCompanionType } from './companions/registry.js';
-import { applyAdvancement } from './rules/advancement.js';
+import { getCompanionType, listCompanionTypes } from './companions/registry.js';
+import { applyAdvancement, getAdvancementContext } from './rules/advancement.js';
 import { buildCompanionView } from './rules/view.js';
 import { renderAbilities } from './ui/renderAbilities.js';
 import { renderAdvancement } from './ui/renderAdvancement.js';
@@ -19,6 +19,9 @@ import { openConfirmModal } from './ui/modals/confirmModal.js';
 import { renderHealth } from './ui/renderHealth.js';
 import { renderSavingThrows } from './ui/renderSavingThrows.js';
 import { renderSummary } from './ui/renderSummary.js';
+import { renderEmptyState } from './ui/renderEmptyState.js';
+import { openAddCompanionModal } from './ui/modals/addCompanionModal.js';
+import { openAdvancementModal } from './ui/modals/advancementModal.js';
 
 const AVAILABLE_THEMES = new Set([
   'arcane-midnight',
@@ -34,17 +37,30 @@ let companionSelect = null;
 let companionNameInput = null;
 let newCompanionButton = null;
 let deleteCompanionButton = null;
+let playerLevelInput = null;
+let emptyStatePanel = null;
+let abilitiesPanel = null;
+let sheetBody = null;
 
 function render() {
   const companion = getActiveCompanion(state);
+  renderCompanionRoster();
+
+  if (!companion) {
+    setCompanionViewVisibility(false);
+    renderEmptyState(openAddCompanionFlow);
+    saveState(state, { validateState });
+    return;
+  }
+
   const companionType = getCompanionType(companion.type);
   if (!companionType) {
     console.error('Unknown companion type:', companion.type);
     return;
   }
+  setCompanionViewVisibility(true);
   ensureCompanionHealth(companion, companionType);
   const view = buildCompanionView(state, companion, companionType);
-  renderCompanionRoster();
   renderSummary(view);
   renderHealth(view, (nextHealth) => {
     companion.health = {
@@ -97,6 +113,17 @@ function ensureCompanionHealth(companion, companionType) {
   }
 }
 
+function ensureActiveCompanion() {
+  const companionIds = Object.keys(state.companions || {});
+  if (companionIds.length === 0) {
+    state.activeCompanionId = null;
+    return;
+  }
+  if (!state.activeCompanionId || !state.companions[state.activeCompanionId]) {
+    state.activeCompanionId = companionIds[0];
+  }
+}
+
 function formatCompanionOption(companion) {
   const typeName = getCompanionType(companion.type)?.name || companion.type;
   return `${companion.name} - ${typeName}`;
@@ -141,7 +168,6 @@ function applyPlayerLevelChange(nextLevel) {
   state.player.level = nextLevel;
   pruneAdvancementHistory(nextLevel);
   render();
-  const playerLevelInput = document.getElementById('playerLevel');
   if (playerLevelInput) {
     playerLevelInput.value = state.player.level;
   }
@@ -160,12 +186,136 @@ function renderCompanionRoster() {
     option.textContent = formatCompanionOption(companion);
     companionSelect.appendChild(option);
   }
-  companionSelect.value = state.activeCompanionId;
-
-  const activeCompanion = getActiveCompanion(state);
-  companionNameInput.value = activeCompanion.name;
-
+  const hasCompanions = companions.length > 0;
+  companionSelect.disabled = !hasCompanions;
+  companionNameInput.disabled = !hasCompanions;
+  if (playerLevelInput) {
+    playerLevelInput.disabled = !hasCompanions;
+  }
   deleteCompanionButton.disabled = companions.length <= 1;
+
+  if (hasCompanions) {
+    companionSelect.value = state.activeCompanionId;
+    const activeCompanion = getActiveCompanion(state);
+    companionNameInput.value = activeCompanion?.name || '';
+  } else {
+    companionNameInput.value = '';
+  }
+}
+
+function setCompanionViewVisibility(hasCompanion) {
+  if (emptyStatePanel) emptyStatePanel.classList.toggle('is-hidden', hasCompanion);
+  if (abilitiesPanel) abilitiesPanel.classList.toggle('is-hidden', !hasCompanion);
+  if (sheetBody) sheetBody.classList.toggle('is-hidden', !hasCompanion);
+}
+
+function getAddCompanionDefaults(typeId) {
+  const nextId = getNextCompanionId(state);
+  const index = Number(nextId.split('-')[1]) || Object.keys(state.companions).length + 1;
+  return getNumberedCompanionName(typeId, index);
+}
+
+function createCompanionFromInput({ typeId, name }) {
+  const nextId = getNextCompanionId(state);
+  const companion = createCompanionInstance(nextId, typeId, name);
+  state.companions[nextId] = companion;
+  state.activeCompanionId = nextId;
+  return companion;
+}
+
+function requestPlayerLevelChange(nextLevel, onApplied) {
+  if (nextLevel === state.player.level) {
+    onApplied?.();
+    return;
+  }
+  if (nextLevel < state.player.level) {
+    const removedCount = countAdvancementEntriesAtOrAbove(nextLevel);
+    if (removedCount > 0) {
+      if (playerLevelInput) {
+        playerLevelInput.value = state.player.level;
+      }
+      openConfirmModal({
+        title: 'Lower Player Level',
+        message: `Lowering to level ${nextLevel} will remove ${removedCount} advancement ${removedCount === 1 ? 'entry' : 'entries'} across companions. Continue?`,
+        confirmLabel: 'Lower Level',
+        cancelLabel: 'Cancel',
+        onConfirm: () => {
+          applyPlayerLevelChange(nextLevel);
+          onApplied?.();
+        }
+      });
+      return;
+    }
+  }
+  applyPlayerLevelChange(nextLevel);
+  onApplied?.();
+}
+
+function openCompanionAdvancementFlow(companion, companionType, playerLevel) {
+  const startLevel = companionType.advancement.startsAtLevel;
+  if (playerLevel < startLevel) return;
+  const levels = [];
+  for (let level = startLevel; level <= playerLevel; level += 1) {
+    levels.push(level);
+  }
+
+  const advanceAtIndex = (index) => {
+    if (index >= levels.length) {
+      render();
+      return;
+    }
+    const level = levels[index];
+    const context = getAdvancementContext(companion, companionType, level);
+    if (!context.type || !context.canAdvance) {
+      advanceAtIndex(index + 1);
+      return;
+    }
+    openAdvancementModal({
+      companionName: companion.name,
+      advancement: context,
+      onConfirm: (action) => {
+        const result = applyAdvancement(companion, companionType, level, action);
+        if (!result.ok) {
+          console.error(result.error);
+          return;
+        }
+        companion.advancementHistory[level] = result.entry;
+        render();
+        advanceAtIndex(index + 1);
+      },
+      onCancel: () => {
+        render();
+      }
+    });
+  };
+
+  advanceAtIndex(0);
+}
+
+function openAddCompanionFlow() {
+  const types = listCompanionTypes();
+  if (!types.length) {
+    console.error('No companion types registered.');
+    return;
+  }
+  const nameForType = (typeId) => getAddCompanionDefaults(typeId);
+  openAddCompanionModal({
+    types,
+    defaultTypeId: defaultCompanionTypeId,
+    defaultName: nameForType(defaultCompanionTypeId),
+    defaultPlayerLevel: state.player.level || 1,
+    nameForType,
+    onConfirm: ({ typeId, name, playerLevel }) => {
+      requestPlayerLevelChange(playerLevel, () => {
+        const companion = createCompanionFromInput({ typeId, name });
+        render();
+        const companionType = getCompanionType(typeId);
+        if (companionType) {
+          openCompanionAdvancementFlow(companion, companionType, state.player.level);
+        }
+      });
+    }
+  });
 }
 
 function setupCompanionControls() {
@@ -173,6 +323,10 @@ function setupCompanionControls() {
   companionNameInput = document.getElementById('companionName');
   newCompanionButton = document.getElementById('newCompanion');
   deleteCompanionButton = document.getElementById('deleteCompanion');
+  playerLevelInput = document.getElementById('playerLevel');
+  emptyStatePanel = document.getElementById('emptyState');
+  abilitiesPanel = document.getElementById('abilities');
+  sheetBody = document.querySelector('.sheet-body');
 
   companionSelect.onchange = (event) => {
     state.activeCompanionId = event.target.value;
@@ -191,13 +345,7 @@ function setupCompanionControls() {
   };
 
   newCompanionButton.onclick = () => {
-    const nextId = getNextCompanionId(state);
-    const index = Number(nextId.split('-')[1]) || Object.keys(state.companions).length + 1;
-    const name = getNumberedCompanionName(defaultCompanionTypeId, index);
-    const companion = createCompanionInstance(nextId, defaultCompanionTypeId, name);
-    state.companions[nextId] = companion;
-    state.activeCompanionId = nextId;
-    render();
+    openAddCompanionFlow();
   };
 
   deleteCompanionButton.onclick = () => {
@@ -247,30 +395,16 @@ async function init() {
   });
 
   ensureTheme();
+  ensureActiveCompanion();
   setupCompanionControls();
-
-  const playerLevelInput = document.getElementById('playerLevel');
-  playerLevelInput.value = state.player.level;
-  playerLevelInput.oninput = (event) => {
-    const nextLevel = Number(event.target.value);
-    if (!Number.isFinite(nextLevel)) return;
-    if (nextLevel === state.player.level) return;
-    if (nextLevel < state.player.level) {
-      const removedCount = countAdvancementEntriesAtOrAbove(nextLevel);
-      if (removedCount > 0) {
-        playerLevelInput.value = state.player.level;
-        openConfirmModal({
-          title: 'Lower Player Level',
-          message: `Lowering to level ${nextLevel} will remove ${removedCount} advancement ${removedCount === 1 ? 'entry' : 'entries'} across companions. Continue?`,
-          confirmLabel: 'Lower Level',
-          cancelLabel: 'Cancel',
-          onConfirm: () => applyPlayerLevelChange(nextLevel)
-        });
-        return;
-      }
-    }
-    applyPlayerLevelChange(nextLevel);
-  };
+  if (playerLevelInput) {
+    playerLevelInput.value = state.player.level;
+    playerLevelInput.oninput = (event) => {
+      const nextLevel = Number(event.target.value);
+      if (!Number.isFinite(nextLevel)) return;
+      requestPlayerLevelChange(nextLevel);
+    };
+  }
 
   const themeSelect = document.getElementById('themeSelect');
   themeSelect.value = state.theme;
