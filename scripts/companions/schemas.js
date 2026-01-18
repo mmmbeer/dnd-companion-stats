@@ -9,6 +9,10 @@ function isStringArray(value) {
   return Array.isArray(value) && value.every((entry) => typeof entry === 'string');
 }
 
+function isStringArrayOrEmpty(value) {
+  return value === undefined || isStringArray(value);
+}
+
 function isNumber(value) {
   return Number.isFinite(value);
 }
@@ -112,6 +116,25 @@ export function validateCompanionType(type) {
     if (!isStringArray(lists.attacks)) addError(errors, 'lists.attacks must be an array of strings.');
     if (!isStringArray(lists.specialSkills)) {
       addError(errors, 'lists.specialSkills must be an array of strings.');
+    }
+  }
+
+  if (type.traits !== undefined) {
+    if (!Array.isArray(type.traits)) {
+      addError(errors, 'traits must be an array when provided.');
+    } else {
+      type.traits.forEach((trait, index) => {
+        if (!isPlainObject(trait)) {
+          addError(errors, `traits[${index}] must be an object.`);
+          return;
+        }
+        if (typeof trait.name !== 'string' || !trait.name.trim()) {
+          addError(errors, `traits[${index}].name must be a non-empty string.`);
+        }
+        if (!isStringArrayOrEmpty(trait.description)) {
+          addError(errors, `traits[${index}].description must be an array of strings.`);
+        }
+      });
     }
   }
 

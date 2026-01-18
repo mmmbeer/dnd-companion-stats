@@ -28,6 +28,33 @@
       "stealth": "proficient"
     }
   },
+  "traits": [
+    {
+      "name": "Fey Nature",
+      "description": [
+        "The blink dog has advantage on saving throws against being charmed, and magic cannot put it to sleep."
+      ]
+    },
+    {
+      "name": "Keen Hearing and Smell",
+      "description": [
+        "The blink dog has advantage on Wisdom (Perception) checks that rely on hearing or smell."
+      ]
+    },
+    {
+      "name": "Companion Bond",
+      "description": [
+        "The blink dog acts on its master's initiative. It obeys the master's verbal commands (no action required).",
+        "If the master is incapacitated, the blink dog acts to defend them to the best of its ability."
+      ]
+    },
+    {
+      "name": "Blink Step",
+      "description": [
+        "As a bonus action, the blink dog magically teleports up to 20 feet to an unoccupied space it can see up to its proficiency bonus per long rest."
+      ]
+    }
+  ],
   "advancement": {
     "startsAtLevel": 4,
     "even": {

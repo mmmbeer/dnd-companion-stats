@@ -19,9 +19,9 @@ export const BASE_TRAITS = [
     ]
   },
   {
-    name: 'Blink Step (1/Short Rest)',
+    name: 'Blink Step',
     description: [
-      'As a bonus action, the blink dog magically teleports up to 20 feet to an unoccupied space it can see.'
+      'As a bonus action, the blink dog magically teleports up to 20 feet to an unoccupied space it can see up to its proficiency bonus per long rest.'
     ]
   }
 ];

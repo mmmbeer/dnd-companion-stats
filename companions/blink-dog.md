@@ -27,7 +27,7 @@ ___
 ***Companion Bond.*** The blink dog acts on its master’s initiative. It obeys the master’s verbal commands (no action required). If the master is incapacitated, the blink dog acts to defend them to the best of its ability.
 
 :
-***Blink Step (1/Short Rest).*** As a bonus action, the blink dog magically teleports up to 20 feet to an unoccupied space it can see.
+***Blink Step.*** As a bonus action, the blink dog magically teleports up to 20 feet to an unoccupied space it can see up to its proficiency bonus per long rest.
 
 ### Actions
 ***Bite.*** *Melee Weapon Attack:* +5 to hit, reach 5 ft., one target.  
