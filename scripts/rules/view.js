@@ -28,6 +28,10 @@ export function buildCompanionView(state, companion, companionType) {
   const armorClass = companionType.baseStats.armorClass;
   const hitPoints = companionType.baseStats.hitPoints;
   const speed = companionType.baseStats.speed;
+  const currentHealth = Number.isFinite(companion.health?.current)
+    ? companion.health.current
+    : hitPoints.max;
+  const tempHealth = Number.isFinite(companion.health?.temp) ? companion.health.temp : 0;
 
   return {
     playerLevel,
@@ -43,9 +47,9 @@ export function buildCompanionView(state, companion, companionType) {
       initiative: abilityScores.dex.mod,
       saveDc: saveDcValue,
       health: {
-        current: hitPoints.max,
+        current: currentHealth,
         max: hitPoints.max,
-        temp: 0
+        temp: tempHealth
       }
     },
     features: {

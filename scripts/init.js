@@ -16,6 +16,8 @@ import { renderStats } from './ui/renderStats.js';
 import { renderSkills } from './ui/renderSkills.js';
 import { renderFeatures } from './ui/renderFeatures.js';
 import { openConfirmModal } from './ui/modals/confirmModal.js';
+import { renderHealth } from './ui/renderHealth.js';
+import { renderSavingThrows } from './ui/renderSavingThrows.js';
 
 const AVAILABLE_THEMES = new Set([
   'arcane-midnight',
@@ -39,8 +41,17 @@ function render() {
     console.error('Unknown companion type:', companion.type);
     return;
   }
+  ensureCompanionHealth(companion, companionType);
   const view = buildCompanionView(state, companion, companionType);
   renderCompanionRoster();
+  renderHealth(view, (nextHealth) => {
+    companion.health = {
+      current: nextHealth.current,
+      temp: nextHealth.temp
+    };
+    saveState(state, { validateState });
+  });
+  renderSavingThrows(view);
   renderAbilities(view);
   renderSkills(view);
   renderStats(view);
@@ -69,6 +80,19 @@ function ensureTheme() {
     state.theme = 'arcane-midnight';
   }
   document.documentElement.dataset.theme = state.theme;
+}
+
+function ensureCompanionHealth(companion, companionType) {
+  if (!companion.health || typeof companion.health !== 'object') {
+    companion.health = { current: companionType.baseStats.hitPoints.max, temp: 0 };
+    return;
+  }
+  if (!Number.isFinite(companion.health.current)) {
+    companion.health.current = companionType.baseStats.hitPoints.max;
+  }
+  if (!Number.isFinite(companion.health.temp)) {
+    companion.health.temp = 0;
+  }
 }
 
 function formatCompanionOption(companion) {
