@@ -1,0 +1,13 @@
+:root[data-theme='astral-ember'] {
+  --bg: #161311;
+  --surface: #1e1916;
+  --surface-muted: #2b221d;
+  --border: #5b3a2e;
+  --text-primary: #f7efe3;
+  --text-muted: #c9b9a2;
+  --accent: #f1b04c;
+  --accent-soft: #3b2c1f;
+  --danger: #c2573b;
+  --success: #3f8e6a;
+  --overlay: rgba(8, 6, 5, 0.82);
+}

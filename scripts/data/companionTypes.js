@@ -17,6 +17,15 @@ export const COMPANION_TYPES = {
         wis: 14,
         cha: 11
       },
+      armorClass: {
+        value: 14,
+        note: 'natural agility'
+      },
+      hitPoints: {
+        max: 27,
+        formula: '5d8 + 5'
+      },
+      speed: 40,
       saves: ['dex', 'wis'],
       skills: {
         perception: 'proficient',

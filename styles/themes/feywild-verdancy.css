@@ -1,0 +1,13 @@
+:root[data-theme='feywild-verdancy'] {
+  --bg: #0d1c16;
+  --surface: #16261d;
+  --surface-muted: #1d3026;
+  --border: #4a5a3d;
+  --text-primary: #f4ecd9;
+  --text-muted: #b8ae95;
+  --accent: #5ee7b0;
+  --accent-soft: #264034;
+  --danger: #b04a43;
+  --success: #4aa174;
+  --overlay: rgba(6, 10, 8, 0.82);
+}

@@ -1,6 +1,6 @@
 import { abilityMod } from './abilities.js';
 
-const ABILITY_ORDER = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+export const ABILITY_ORDER = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
 function listFromHistory(advancementHistory, actionType) {
   if (!advancementHistory) return [];
@@ -57,6 +57,36 @@ export function getKnownSpecialSkills(companion, companionType) {
   const overrides = companion.overrides?.specialSkills || [];
   const fromHistory = listFromHistory(companion.advancementHistory, 'specialSkill');
   return Array.from(new Set([...overrides, ...fromHistory]));
+}
+
+export function getSavingThrowProficiencies(companion, companionType) {
+  const base = new Set(companionType.baseStats.saves || []);
+  const feats = getKnownFeats(companion, companionType);
+  if (feats.includes('Fey Resilience')) {
+    base.add('con');
+  }
+  return Array.from(base);
+}
+
+export function getSkillProficiencies(companion, companionType) {
+  const profs = {};
+  const baseSkills = companionType.baseStats.skills || {};
+  for (const [skill, value] of Object.entries(baseSkills)) {
+    if (value === 'expertise') {
+      profs[skill] = { proficient: true, expertise: true };
+    } else if (value === 'proficient') {
+      profs[skill] = { proficient: true, expertise: false };
+    }
+  }
+
+  const feats = getKnownFeats(companion, companionType);
+  if (feats.includes('Planar Tracker')) {
+    profs.survival = { proficient: true, expertise: profs.survival?.expertise || false };
+  }
+  if (feats.includes('Interplanar Tracker')) {
+    profs.survival = { proficient: true, expertise: true };
+  }
+  return profs;
 }
 
 export function buildAbilityView(abilityScores) {

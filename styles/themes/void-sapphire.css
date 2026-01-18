@@ -1,0 +1,13 @@
+:root[data-theme='void-sapphire'] {
+  --bg: #0b1018;
+  --surface: #131a24;
+  --surface-muted: #1b2531;
+  --border: #2a4360;
+  --text-primary: #e3f1ff;
+  --text-muted: #a8bdd2;
+  --accent: #2fe0ff;
+  --accent-soft: #1b2c40;
+  --danger: #c25555;
+  --success: #3b9db5;
+  --overlay: rgba(4, 7, 10, 0.82);
+}

@@ -5,9 +5,22 @@ import { applyAdvancement } from './rules/advancement.js';
 import { buildCompanionView } from './rules/view.js';
 import { renderAbilities } from './ui/renderAbilities.js';
 import { renderAdvancement } from './ui/renderAdvancement.js';
-import { renderSummary } from './ui/renderSummary.js';
+import { renderStats } from './ui/renderStats.js';
+import { renderSkills } from './ui/renderSkills.js';
+import { renderFeatures } from './ui/renderFeatures.js';
 
 let state = loadState(DEFAULT_STATE);
+const AVAILABLE_THEMES = new Set([
+  'arcane-midnight',
+  'feywild-verdancy',
+  'astral-ember',
+  'void-sapphire',
+  'relic-stone'
+]);
+
+if (!AVAILABLE_THEMES.has(state.theme)) {
+  state.theme = 'arcane-midnight';
+}
 
 function render() {
   const companion = getActiveCompanion(state);
@@ -18,8 +31,10 @@ function render() {
   }
   const view = buildCompanionView(state, companion, companionType);
   renderAbilities(view);
+  renderSkills(view);
+  renderStats(view);
+  renderFeatures(view);
   renderAdvancement(view, (action) => applyAdvancementAction(companion, companionType, action));
-  renderSummary(view);
   saveState(state);
 }
 

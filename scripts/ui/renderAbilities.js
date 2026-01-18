@@ -2,34 +2,37 @@ export function renderAbilities(view) {
   const root = document.getElementById('abilities');
   root.innerHTML = `
     <div class="panel-header">
-      <h2>Abilities</h2>
-      <p class="panel-subtitle">Base scores + advancements</p>
+      <h2>Ability Scores</h2>
+      <p class="panel-subtitle">Modifier over score</p>
     </div>
   `;
 
-  const grid = document.createElement('div');
-  grid.className = 'ability-grid';
+  const labelRow = document.createElement('div');
+  labelRow.className = 'ability-table ability-row-labels';
+
+  const modRow = document.createElement('div');
+  modRow.className = 'ability-table ability-row-mods';
+
+  const scoreRow = document.createElement('div');
+  scoreRow.className = 'ability-table ability-row-scores';
 
   for (const ability of view.abilities) {
-    const card = document.createElement('div');
-    card.className = 'ability-card';
+    const labelCell = document.createElement('div');
+    labelCell.className = 'ability-cell ability-label';
+    labelCell.textContent = ability.label;
+    labelRow.appendChild(labelCell);
 
-    const label = document.createElement('div');
-    label.className = 'ability-label';
-    label.textContent = ability.label;
-
-    const score = document.createElement('div');
-    score.className = 'ability-score';
-    score.textContent = ability.score;
-
-    const mod = document.createElement('div');
-    mod.className = 'ability-mod';
+    const modCell = document.createElement('div');
+    modCell.className = 'ability-cell ability-mod';
     const sign = ability.mod >= 0 ? '+' : '';
-    mod.textContent = `${sign}${ability.mod}`;
+    modCell.textContent = `${sign}${ability.mod}`;
+    modRow.appendChild(modCell);
 
-    card.append(label, score, mod);
-    grid.appendChild(card);
+    const scoreCell = document.createElement('div');
+    scoreCell.className = 'ability-cell ability-score';
+    scoreCell.textContent = ability.score;
+    scoreRow.appendChild(scoreCell);
   }
 
-  root.appendChild(grid);
+  root.append(labelRow, modRow, scoreRow);
 }

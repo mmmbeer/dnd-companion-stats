@@ -8,6 +8,11 @@ const LEGACY_ACTION_MAP = {
   specialSkills: 'specialSkill'
 };
 
+const THEME_MAP_V2_TO_V3 = {
+  light: 'relic-stone',
+  dark: 'arcane-midnight'
+};
+
 function migrateAdvancementHistory(history) {
   if (!history || typeof history !== 'object') return {};
   const migrated = {};
@@ -85,11 +90,28 @@ function migrateV1ToV2(stateV1) {
   };
 }
 
+function normalizeTheme(theme) {
+  if (!theme || typeof theme !== 'string') return 'arcane-midnight';
+  return THEME_MAP_V2_TO_V3[theme] || theme;
+}
+
+function migrateV2ToV3(stateV2) {
+  return {
+    ...stateV2,
+    version: 3,
+    theme: normalizeTheme(stateV2.theme)
+  };
+}
+
 export function migrateState(state) {
   if (!state || typeof state !== 'object') return null;
   const version = Number(state.version) || 1;
   if (version === STATE_VERSION) return state;
-  if (version === 1) return migrateV1ToV2(state);
+  if (version === 1) {
+    const v2 = migrateV1ToV2(state);
+    return migrateV2ToV3(v2);
+  }
+  if (version === 2) return migrateV2ToV3(state);
   console.error('Unsupported state version:', version);
   return null;
 }

@@ -1,0 +1,13 @@
+:root[data-theme='arcane-midnight'] {
+  --bg: #0e121b;
+  --surface: #151b26;
+  --surface-muted: #1c2431;
+  --border: #2d3b4e;
+  --text-primary: #e6edf6;
+  --text-muted: #9aa8ba;
+  --accent: #7f5ae6;
+  --accent-soft: #2a2340;
+  --danger: #b64b4b;
+  --success: #3f9d78;
+  --overlay: rgba(6, 8, 12, 0.8);
+}

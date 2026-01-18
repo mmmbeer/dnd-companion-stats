@@ -14,6 +14,7 @@ This document defines the authoritative development roadmap for the Blink Dog Co
 - Support multiple companion types via structured data
 - Guide advancement through a modal-based workflow
 - Keep all logic deterministic and inspectable
+- Conform UI styling to `docs/style-guide.md` (theme tokens, angular geometry, dense layout)
 
 ### Non-Goals
 - No combat automation
@@ -224,6 +225,7 @@ Rendering rules:
 - No mutation inside render functions
 - No derived calculations inside UI modules
 - Modals read from rules layer
+- Styling must use theme tokens from `styles/themes/` and follow `docs/style-guide.md` constraints
 
 Required UI modules:
 - Companion list sidebar

@@ -1,6 +1,6 @@
 import { DEFAULT_COMPANION_TYPE_ID } from '../data/companionTypes.js';
 
-export const STATE_VERSION = 2;
+export const STATE_VERSION = 3;
 export const DEFAULT_COMPANION_ID = 'companion-1';
 
 export function createCompanionInstance(id, typeId, name) {
@@ -16,7 +16,7 @@ export function createCompanionInstance(id, typeId, name) {
 export function createDefaultState() {
   return {
     version: STATE_VERSION,
-    theme: 'light',
+    theme: 'arcane-midnight',
     player: {
       level: 4
     },

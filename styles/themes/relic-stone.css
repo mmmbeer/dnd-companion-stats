@@ -1,0 +1,13 @@
+:root[data-theme='relic-stone'] {
+  --bg: #e9e4d8;
+  --surface: #f2efe6;
+  --surface-muted: #e0d9cb;
+  --border: #3b332b;
+  --text-primary: #1b1916;
+  --text-muted: #5a5248;
+  --accent: #6f4aa8;
+  --accent-soft: #d6cceb;
+  --danger: #a3503e;
+  --success: #3f7a5a;
+  --overlay: rgba(20, 18, 15, 0.5);
+}
