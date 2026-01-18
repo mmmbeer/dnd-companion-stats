@@ -1,8 +1,9 @@
 export function renderSummary(view) {
   const root = document.getElementById('summary');
-  const feats = view.feats.join(', ') || 'None';
-  const attacks = view.attacks.join(', ') || 'None';
-  const skills = view.specialSkills.join(', ') || 'None';
+  if (!root) return;
+  const feats = (view.feats || []).join(', ') || 'None';
+  const attacks = (view.attacks || []).join(', ') || 'None';
+  const skills = (view.specialSkills || []).join(', ') || 'None';
 
   root.innerHTML = `
     <div class="panel-header summary-title">

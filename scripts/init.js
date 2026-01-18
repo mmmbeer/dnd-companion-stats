@@ -18,6 +18,7 @@ import { renderFeatures } from './ui/renderFeatures.js';
 import { openConfirmModal } from './ui/modals/confirmModal.js';
 import { renderHealth } from './ui/renderHealth.js';
 import { renderSavingThrows } from './ui/renderSavingThrows.js';
+import { renderSummary } from './ui/renderSummary.js';
 
 const AVAILABLE_THEMES = new Set([
   'arcane-midnight',
@@ -44,6 +45,7 @@ function render() {
   ensureCompanionHealth(companion, companionType);
   const view = buildCompanionView(state, companion, companionType);
   renderCompanionRoster();
+  renderSummary(view);
   renderHealth(view, (nextHealth) => {
     companion.health = {
       current: nextHealth.current,
@@ -118,6 +120,30 @@ function pruneAdvancementHistory(level) {
         delete companion.advancementHistory[entryLevel];
       }
     }
+  }
+}
+
+function countAdvancementEntriesAtOrAbove(level) {
+  let count = 0;
+  for (const companion of Object.values(state.companions)) {
+    if (!companion.advancementHistory) continue;
+    for (const entryLevel of Object.keys(companion.advancementHistory)) {
+      const numericLevel = Number(entryLevel);
+      if (Number.isFinite(numericLevel) && numericLevel >= level) {
+        count += 1;
+      }
+    }
+  }
+  return count;
+}
+
+function applyPlayerLevelChange(nextLevel) {
+  state.player.level = nextLevel;
+  pruneAdvancementHistory(nextLevel);
+  render();
+  const playerLevelInput = document.getElementById('playerLevel');
+  if (playerLevelInput) {
+    playerLevelInput.value = state.player.level;
   }
 }
 
@@ -228,9 +254,22 @@ async function init() {
   playerLevelInput.oninput = (event) => {
     const nextLevel = Number(event.target.value);
     if (!Number.isFinite(nextLevel)) return;
-    state.player.level = nextLevel;
-    pruneAdvancementHistory(nextLevel);
-    render();
+    if (nextLevel === state.player.level) return;
+    if (nextLevel < state.player.level) {
+      const removedCount = countAdvancementEntriesAtOrAbove(nextLevel);
+      if (removedCount > 0) {
+        playerLevelInput.value = state.player.level;
+        openConfirmModal({
+          title: 'Lower Player Level',
+          message: `Lowering to level ${nextLevel} will remove ${removedCount} advancement ${removedCount === 1 ? 'entry' : 'entries'} across companions. Continue?`,
+          confirmLabel: 'Lower Level',
+          cancelLabel: 'Cancel',
+          onConfirm: () => applyPlayerLevelChange(nextLevel)
+        });
+        return;
+      }
+    }
+    applyPlayerLevelChange(nextLevel);
   };
 
   const themeSelect = document.getElementById('themeSelect');
