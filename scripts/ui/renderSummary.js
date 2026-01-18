@@ -5,12 +5,38 @@ export function renderSummary(view) {
   const skills = view.specialSkills.join(', ') || 'None';
 
   root.innerHTML = `
-<h2>Summary</h2>
-<p>Companion: ${view.companionName}</p>
-<p>Proficiency Bonus: +${view.proficiencyBonus}</p>
-<p>Blink Save DC: ${view.saveDc}</p>
-<p>Feats: ${feats}</p>
-<p>Attacks: ${attacks}</p>
-<p>Skills: ${skills}</p>
-`;
+    <div class="panel-header summary-title">
+      <div>
+        <p class="topbar-kicker">Companion</p>
+        <h2>${view.companionName}</h2>
+      </div>
+      <span class="summary-tag">Level ${view.playerLevel}</span>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="stat-label">Proficiency</span>
+        <span class="stat-value">+${view.proficiencyBonus}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Blink Save DC</span>
+        <span class="stat-value">${view.saveDc}</span>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-list">
+        <h3>Feats</h3>
+        <p>${feats}</p>
+      </div>
+      <div class="summary-list">
+        <h3>Attacks</h3>
+        <p>${attacks}</p>
+      </div>
+      <div class="summary-list">
+        <h3>Special Skills</h3>
+        <p>${skills}</p>
+      </div>
+    </div>
+  `;
 }

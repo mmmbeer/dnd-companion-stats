@@ -1,26 +1,83 @@
-header {
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--surface-strong);
+  border-bottom: var(--panel-border);
+  box-shadow: var(--shadow-tight);
+}
+
+.topbar-brand {
+  max-width: 560px;
+}
+
+.topbar-brand h1 {
+  margin-bottom: var(--space-1);
+}
+
+.topbar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem 2rem 0.75rem;
 }
 
-main {
+.sheet-grid {
   display: grid;
-  gap: 1.5rem;
-  max-width: 900px;
-  padding: 0 2rem 2rem;
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  grid-template-areas:
+    "abilities summary"
+    "abilities advancement";
+  gap: var(--sheet-gap);
+  max-width: var(--sheet-max);
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-5);
 }
 
-section {
-  background: var(--surface);
+.abilities-panel {
+  grid-area: abilities;
 }
 
-@media (max-width: 700px) {
-  header,
-  main {
-    padding: 1rem 1.25rem;
+.summary-panel {
+  grid-area: summary;
+}
+
+.advancement-panel {
+  grid-area: advancement;
+}
+
+@media (max-width: 960px) {
+  .topbar {
+    padding: var(--space-4);
+  }
+
+  .sheet-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "summary"
+      "abilities"
+      "advancement";
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .topbar-controls {
+    width: 100%;
+    justify-content: flex-start;
   }
 }

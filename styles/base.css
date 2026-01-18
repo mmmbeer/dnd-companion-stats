@@ -12,11 +12,26 @@ body {
   color: var(--text);
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: var(--bg-pattern);
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: -1;
+}
+
 h1,
 h2,
 h3 {
-  margin: 0 0 0.75rem;
-  letter-spacing: 0.02em;
+  font-family: var(--font-display);
+  margin: 0 0 var(--space-2);
+  letter-spacing: 0.04em;
+}
+
+p {
+  margin: 0;
 }
 
 label,

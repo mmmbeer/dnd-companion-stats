@@ -1,34 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blink Dog Companion Manager</title>
-<link rel="stylesheet" href="app.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blink Dog Companion Manager</title>
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<header>
-<h1>Blink Dog Companion</h1>
-<label>Theme
-<select id="themeSelect">
-<option value="light">Light</option>
-<option value="dark">Dark</option>
-</select>
-</label>
-</header>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-brand">
+        <p class="topbar-kicker">Companion Sheet</p>
+        <h1>Blink Dog Companion</h1>
+        <p class="topbar-subtitle">Guardian of the party, skittering between worlds.</p>
+      </div>
+      <div class="topbar-controls">
+        <label class="field field-inline">
+          <span>Player Level</span>
+          <input id="playerLevel" type="number" min="1" max="20">
+        </label>
+        <label class="field field-inline">
+          <span>Theme</span>
+          <select id="themeSelect">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+      </div>
+    </header>
 
-<main>
-<section>
-<label>Player Level
-<input id="playerLevel" type="number" min="1" max="20">
-</label>
-</section>
+    <main class="sheet-grid">
+      <section class="panel abilities-panel" id="abilities"></section>
+      <section class="panel summary-panel" id="summary"></section>
+      <section class="panel advancement-panel" id="advancement"></section>
+    </main>
+  </div>
 
-<section id="abilities"></section>
-<section id="advancement"></section>
-<section id="summary"></section>
-</main>
-
-<script type="module" src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

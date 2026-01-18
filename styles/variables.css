@@ -1,7 +1,20 @@
 :root {
-  --font-main: "Bitter", "Georgia", serif;
-  --font-ui: "Fira Sans", "Segoe UI", sans-serif;
-  --radius-card: 10px;
+  --font-display: "Cinzel", "Garamond", "Times New Roman", serif;
+  --font-main: "Crimson Text", "Georgia", serif;
+  --font-ui: "Source Sans 3", "Segoe UI", sans-serif;
+  --radius-card: 14px;
   --radius-pill: 999px;
-  --shadow-soft: 0 18px 40px var(--shadow);
+  --radius-chip: 8px;
+  --shadow-soft: 0 14px 32px var(--shadow);
+  --shadow-tight: 0 6px 16px var(--shadow-strong);
+  --space-1: 0.35rem;
+  --space-2: 0.6rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+  --space-6: 2.75rem;
+  --sheet-max: 1100px;
+  --sheet-gap: 1.35rem;
+  --panel-border: 1px solid var(--border);
+  --transition-fast: 160ms ease;
 }

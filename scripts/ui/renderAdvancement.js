@@ -2,16 +2,21 @@ import { openAdvancementModal } from './modals/advancementModal.js';
 
 export function renderAdvancement(view, onApply) {
   const root = document.getElementById('advancement');
-  root.innerHTML = '<h2>Advancement</h2>';
+  root.innerHTML = `
+    <div class="panel-header">
+      <h2>Advancement</h2>
+      <p class="panel-subtitle">Level-gated companion growth</p>
+    </div>
+  `;
 
   const advancement = view.advancement;
   if (!advancement.type) {
-    root.innerHTML += '<p>No companion advancement yet.</p>';
+    root.innerHTML += '<p class="advancement-empty">No companion advancement yet.</p>';
     return;
   }
 
   if (!advancement.canAdvance) {
-    root.innerHTML += `<p>${advancement.blockedReason || 'Advancement unavailable.'}</p>`;
+    root.innerHTML += `<p class="advancement-empty">${advancement.blockedReason || 'Advancement unavailable.'}</p>`;
     return;
   }
 

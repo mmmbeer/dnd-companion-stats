@@ -1,13 +1,18 @@
 :root[data-theme='light'] {
-  --bg-start: #f6f1ea;
-  --bg-end: #e7ded2;
-  --bg: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+  --bg-start: #f4ede2;
+  --bg-end: #e7d9c5;
+  --bg: linear-gradient(155deg, var(--bg-start), var(--bg-end));
+  --bg-pattern: radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.45), transparent 55%),
+    radial-gradient(circle at 80% 20%, rgba(255, 250, 245, 0.5), transparent 45%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 60%);
+  --surface-strong: #fdf7ee;
   --surface: #fffaf4;
-  --surface-muted: #f2ebe2;
-  --text: #201b16;
-  --text-muted: #4f463c;
-  --border: #d2c7b9;
-  --accent: #9a6b2f;
-  --overlay: rgba(32, 27, 22, 0.45);
-  --shadow: rgba(48, 38, 28, 0.18);
+  --surface-muted: #f1e6d7;
+  --text: #241c14;
+  --text-muted: #665446;
+  --border: #d4c1ad;
+  --accent: #b23a2b;
+  --overlay: rgba(28, 20, 14, 0.45);
+  --shadow: rgba(62, 46, 32, 0.18);
+  --shadow-strong: rgba(62, 46, 32, 0.28);
 }
