@@ -92,6 +92,47 @@ button {
     color var(--transition-fast);
 }
 
+.button-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.icon {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background-color: currentColor;
+  mask: no-repeat center / contain;
+  -webkit-mask: no-repeat center / contain;
+  flex: 0 0 auto;
+}
+
+.icon-random {
+  mask-image: url('../assets/icons/random.svg');
+  -webkit-mask-image: url('../assets/icons/random.svg');
+}
+
+.icon-trash {
+  mask-image: url('../assets/icons/trash.svg');
+  -webkit-mask-image: url('../assets/icons/trash.svg');
+}
+
+.icon-close {
+  mask-image: url('../assets/icons/close.svg');
+  -webkit-mask-image: url('../assets/icons/close.svg');
+}
+
+.icon-proficient {
+  mask-image: url('../assets/icons/proficient.svg');
+  -webkit-mask-image: url('../assets/icons/proficient.svg');
+}
+
+.icon-expert {
+  mask-image: url('../assets/icons/expert.svg');
+  -webkit-mask-image: url('../assets/icons/expert.svg');
+}
+
 button:hover {
   border-color: var(--accent);
   background: var(--accent-soft);
@@ -364,6 +405,15 @@ button:disabled {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+}
+
+.skill-tag .icon {
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 .skill-values {

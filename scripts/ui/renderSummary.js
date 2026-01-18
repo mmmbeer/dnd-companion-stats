@@ -6,14 +6,6 @@ export function renderSummary(view) {
   const skills = (view.specialSkills || []).join(', ') || 'None';
 
   root.innerHTML = `
-    <div class="panel-header summary-title">
-      <div>
-        <p class="topbar-kicker">Companion</p>
-        <h2>${view.companionName}</h2>
-      </div>
-      <span class="summary-tag">Level ${view.playerLevel}</span>
-    </div>
-
     <div class="stat-grid">
       <div class="stat-card">
         <span class="stat-label">Proficiency</span>

@@ -27,12 +27,22 @@ export function renderSkills(view) {
     if (skill.expertise) {
       const tag = document.createElement('span');
       tag.className = 'skill-tag';
-      tag.textContent = 'E';
+      tag.setAttribute('role', 'img');
+      tag.setAttribute('aria-label', 'Expertise');
+      const icon = document.createElement('span');
+      icon.className = 'icon icon-expert';
+      icon.setAttribute('aria-hidden', 'true');
+      tag.appendChild(icon);
       tags.appendChild(tag);
     } else if (skill.proficient) {
       const tag = document.createElement('span');
       tag.className = 'skill-tag';
-      tag.textContent = 'P';
+      tag.setAttribute('role', 'img');
+      tag.setAttribute('aria-label', 'Proficient');
+      const icon = document.createElement('span');
+      icon.className = 'icon icon-proficient';
+      icon.setAttribute('aria-hidden', 'true');
+      tag.appendChild(icon);
       tags.appendChild(tag);
     }
 

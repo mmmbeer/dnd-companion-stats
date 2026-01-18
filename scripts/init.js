@@ -43,6 +43,8 @@ let playerLevelInput = null;
 let emptyStatePanel = null;
 let abilitiesPanel = null;
 let sheetBody = null;
+let topbarTitle = null;
+let topbarSubtitle = null;
 
 function render() {
   const companion = getActiveCompanion(state);
@@ -50,6 +52,7 @@ function render() {
 
   if (!companion) {
     setCompanionViewVisibility(false);
+    updateTopbarTitle();
     renderEmptyState(openAddCompanionFlow);
     saveState(state, { validateState });
     return;
@@ -60,6 +63,7 @@ function render() {
     console.error('Unknown companion type:', companion.type);
     return;
   }
+  updateTopbarTitle(companion, companionType);
   setCompanionViewVisibility(true);
   ensureCompanionHealth(companion, companionType);
   const view = buildCompanionView(state, companion, companionType);
@@ -214,6 +218,19 @@ function setCompanionViewVisibility(hasCompanion) {
   if (sheetBody) sheetBody.classList.toggle('is-hidden', !hasCompanion);
 }
 
+function updateTopbarTitle(companion, companionType) {
+  if (!topbarTitle || !topbarSubtitle) return;
+  if (!companion || !companionType) {
+    topbarTitle.textContent = 'Companion Sheet';
+    topbarSubtitle.textContent = '';
+    return;
+  }
+  const levelLabel = `L${state.player.level}`;
+  topbarTitle.textContent = `${companion.name} - ${companionType.name} ${levelLabel} - Companion Sheet`;
+  const subtag = companionType.traits?.[0]?.name ?? '';
+  topbarSubtitle.textContent = subtag;
+}
+
 function setActiveCompanionName(value) {
   const activeCompanion = getActiveCompanion(state);
   if (!activeCompanion) return;
@@ -225,6 +242,10 @@ function setActiveCompanionName(value) {
   const selectedOption = companionSelect?.options[companionSelect.selectedIndex];
   if (selectedOption) {
     selectedOption.textContent = formatCompanionOption(activeCompanion);
+  }
+  const companionType = getCompanionType(activeCompanion.type);
+  if (companionType) {
+    updateTopbarTitle(activeCompanion, companionType);
   }
   saveState(state, { validateState });
 }
@@ -348,6 +369,8 @@ function setupCompanionControls() {
   emptyStatePanel = document.getElementById('emptyState');
   abilitiesPanel = document.getElementById('abilities');
   sheetBody = document.querySelector('.sheet-body');
+  topbarTitle = document.getElementById('topbarTitle');
+  topbarSubtitle = document.getElementById('topbarSubtitle');
 
   companionSelect.onchange = (event) => {
     state.activeCompanionId = event.target.value;

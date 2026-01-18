@@ -10,9 +10,8 @@
   <div class="page">
     <header class="topbar">
       <div class="topbar-brand">
-        <p class="topbar-kicker">Companion Sheet</p>
-        <h1>Blink Dog Companion</h1>
-        <p class="topbar-subtitle">Guardian of the party, skittering between worlds.</p>
+        <h1 id="topbarTitle">Companion Sheet</h1>
+        <p class="topbar-subtitle" id="topbarSubtitle"></p>
       </div>
       <div class="topbar-controls">
         <label class="field field-inline">
@@ -24,11 +23,17 @@
             <span>Name</span>
             <input id="companionName" type="text" maxlength="40">
           </label>
-          <button id="randomizeCompanionName" type="button" class="button-secondary">Randomize</button>
+          <button id="randomizeCompanionName" type="button" class="button-secondary button-icon">
+            <span class="icon icon-random" aria-hidden="true"></span>
+            Randomize
+          </button>
         </div>
         <div class="topbar-actions">
           <button id="newCompanion" type="button">+ New Companion</button>
-          <button id="deleteCompanion" type="button" class="button-secondary">Delete</button>
+          <button id="deleteCompanion" type="button" class="button-secondary button-icon">
+            <span class="icon icon-trash" aria-hidden="true"></span>
+            Delete
+          </button>
         </div>
         <label class="field field-inline">
           <span>Player Level</span>

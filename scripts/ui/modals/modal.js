@@ -38,8 +38,12 @@ export function openModal({
 
   const cancelBtn = document.createElement('button');
   cancelBtn.type = 'button';
-  cancelBtn.className = 'button-secondary';
-  cancelBtn.textContent = cancelLabel;
+  cancelBtn.className = 'button-secondary button-icon';
+  const cancelIcon = document.createElement('span');
+  cancelIcon.className = 'icon icon-close';
+  cancelIcon.setAttribute('aria-hidden', 'true');
+  const cancelText = document.createTextNode(cancelLabel);
+  cancelBtn.append(cancelIcon, cancelText);
 
   const confirmBtn = document.createElement('button');
   confirmBtn.type = 'button';
