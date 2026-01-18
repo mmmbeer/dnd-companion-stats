@@ -16,6 +16,18 @@
       </div>
       <div class="topbar-controls">
         <label class="field field-inline">
+          <span>Companion</span>
+          <select id="companionSelect"></select>
+        </label>
+        <label class="field field-inline">
+          <span>Name</span>
+          <input id="companionName" type="text" maxlength="40">
+        </label>
+        <div class="topbar-actions">
+          <button id="newCompanion" type="button">+ New Companion</button>
+          <button id="deleteCompanion" type="button" class="button-secondary">Delete</button>
+        </div>
+        <label class="field field-inline">
           <span>Player Level</span>
           <input id="playerLevel" type="number" min="1" max="20">
         </label>
@@ -36,7 +48,6 @@
 
     <main class="sheet-body">
       <aside class="sheet-sidebar">
-        <section class="panel companions-panel" id="companions"></section>
         <section class="panel skills-panel" id="skills"></section>
       </aside>
       <div class="sheet-main">

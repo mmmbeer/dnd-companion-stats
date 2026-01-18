@@ -214,6 +214,7 @@ Modal state:
 - Temporary
 - Discarded on cancel
 - Only committed on confirm
+- Use custom modals for confirmations; no browser alert/confirm/prompt dialogs
 
 ---
 
