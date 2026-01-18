@@ -302,6 +302,52 @@ button:disabled {
   font-size: 0.85rem;
 }
 
+.companions-list {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.companion-button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: left;
+  background: var(--surface-muted);
+}
+
+.companion-button.is-active {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.companion-label {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.companion-name {
+  font-size: 0.95rem;
+}
+
+.companion-type {
+  font-family: var(--font-ui);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.companion-active {
+  border: 1px solid var(--border);
+  padding: 0.1rem 0.4rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 .features-group {
   display: grid;
   gap: var(--space-3);

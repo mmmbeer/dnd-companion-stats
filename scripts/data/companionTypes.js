@@ -50,11 +50,3 @@ export const COMPANION_TYPES = {
     }
   }
 };
-
-export function getCompanionType(typeId) {
-  return COMPANION_TYPES[typeId] || null;
-}
-
-export function listCompanionTypes() {
-  return Object.values(COMPANION_TYPES);
-}

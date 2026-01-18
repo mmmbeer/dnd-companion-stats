@@ -1,5 +1,3 @@
-import { DEFAULT_COMPANION_TYPE_ID } from '../data/companionTypes.js';
-
 export const STATE_VERSION = 3;
 export const DEFAULT_COMPANION_ID = 'companion-1';
 
@@ -13,7 +11,7 @@ export function createCompanionInstance(id, typeId, name) {
   };
 }
 
-export function createDefaultState() {
+export function createDefaultState(defaultTypeId, defaultCompanionName) {
   return {
     version: STATE_VERSION,
     theme: 'arcane-midnight',
@@ -23,15 +21,13 @@ export function createDefaultState() {
     companions: {
       [DEFAULT_COMPANION_ID]: createCompanionInstance(
         DEFAULT_COMPANION_ID,
-        DEFAULT_COMPANION_TYPE_ID,
-        'Blink Dog'
+        defaultTypeId,
+        defaultCompanionName
       )
     },
     activeCompanionId: DEFAULT_COMPANION_ID
   };
 }
-
-export const DEFAULT_STATE = createDefaultState();
 
 export function getActiveCompanion(state) {
   return state.companions[state.activeCompanionId];

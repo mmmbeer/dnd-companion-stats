@@ -46,6 +46,11 @@
   padding: var(--space-4) var(--space-5) var(--space-6);
 }
 
+.sheet-sidebar {
+  display: grid;
+  gap: var(--sheet-gap);
+}
+
 .sheet-main {
   display: grid;
   gap: var(--sheet-gap);

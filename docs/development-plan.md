@@ -52,8 +52,12 @@ This document defines the authoritative development roadmap for the Blink Dog Co
     core/
       state.js
       storage.js
+      migrations.js
+
+    companions/
       registry.js
-      validation.js
+      schemas.js
+      loader.js
 
     rules/
       abilities.js
@@ -61,10 +65,6 @@ This document defines the authoritative development roadmap for the Blink Dog Co
       skills.js
       savingThrows.js
       advancement.js
-
-    companions/
-      loader.js
-      schemas.js
 
     ui/
       render/
@@ -95,23 +95,21 @@ Note: The current codebase uses a smaller subset of this layout. The target stru
 ## 4. Current Status (Checkpoint)
 
 ### Implemented
-- Single-companion view with basic summary and advancement controls
-- Basic rules helpers (ability modifiers, proficiency bonus)
-- LocalStorage persistence (unversioned)
+- Single-companion UI with abilities, skills, stats, features, and advancement panel
+- Multi-companion state model with an active companion
+- Modal-driven advancement flow with confirm/cancel safeguards
+- Derived values computed on demand (mods, proficiency bonus, save DCs, skill bonuses)
+- Versioned localStorage persistence with explicit migrations
 - Theme selection stored in state
+- Companion type registry with schema validation on startup
 
 ### Partial / Needs Revision
-- Advancement rules are present but not modal-driven
-- Derived values are stored in state (proficiency bonus)
-- UI renders use companion data directly without a formal registry
-- No validation on load or before apply
+- Companion data loads from JSON manifest; markdown generation not started
+- UI supports switching but lacks companion creation and management tools
 
 ### Missing
-- Multi-companion state model and switching support
-- Companion type loader/registry and schema validation
-- Modal system and modal-based advancement flow
-- Versioned state storage with explicit migrations
-- Data-driven companion definitions in structured data files
+- Companion creation workflows (add/remove/rename)
+- Markdown-to-JSON companion pipeline (optional)
 
 ---
 
@@ -279,19 +277,21 @@ Automated (optional):
 
 ## 14. Phased Implementation Roadmap
 
-### Phase 1 - Stabilize Core (Status: Partial)
+### Phase 1 - Stabilize Core (Status: Mostly Complete)
 - Finalize state schema (multi-companion model)
 - Remove stored derived values from state
-- Harden rules engine API and validation
+- Harden rules engine API and advancement validation
 - Add modal-driven advancement (required for any advancement UI)
 - Add versioned persistence with explicit migrations
+- Remaining: add stricter state validation on load
 
-### Phase 2 - Structured Companion Types (Status: Not Started)
-- Companion type loader
-- Registry
-- Schema validation
+### Phase 2 - Structured Companion Types (Status: In Progress)
+- Companion type registry with schema validation
+- Companion type loader from JSON manifest
+- Instance validation hooked into load/save paths
+- Remaining: optional markdown-to-JSON pipeline
 
-### Phase 3 - UI Expansion (Status: Not Started)
+### Phase 3 - UI Expansion (Status: In Progress)
 - Companion switcher
 - Summary panels
 - Warnings and confirmations

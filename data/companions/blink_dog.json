@@ -1,0 +1,73 @@
+{
+  "id": "blink_dog",
+  "name": "Blink Dog",
+  "baseStats": {
+    "abilities": {
+      "str": 12,
+      "dex": 16,
+      "con": 12,
+      "int": 8,
+      "wis": 14,
+      "cha": 11
+    },
+    "armorClass": {
+      "value": 14,
+      "note": "natural agility"
+    },
+    "hitPoints": {
+      "max": 27,
+      "formula": "5d8 + 5"
+    },
+    "speed": 40,
+    "saves": [
+      "dex",
+      "wis"
+    ],
+    "skills": {
+      "perception": "proficient",
+      "stealth": "proficient"
+    }
+  },
+  "advancement": {
+    "startsAtLevel": 4,
+    "even": {
+      "type": "asi",
+      "maxScore": 20
+    },
+    "odd": {
+      "choices": [
+        "feats",
+        "attacks",
+        "specialSkills"
+      ]
+    }
+  },
+  "baseAttacks": [
+    "Bite"
+  ],
+  "lists": {
+    "feats": [
+      "Phase Skirmisher",
+      "Pack Harrier",
+      "Fey Phase Guard",
+      "Planar Tracker",
+      "Interplanar Tracker",
+      "Blink Grip",
+      "Fey Resilience",
+      "Echo Blink"
+    ],
+    "attacks": [
+      "Phase Pounce",
+      "Flurry of Claws",
+      "Blink Ram",
+      "Displacement Rake"
+    ],
+    "specialSkills": [
+      "Flickering Hover",
+      "Fey Distraction",
+      "Phase Sense",
+      "Blink Anchor",
+      "Blinkcasting"
+    ]
+  }
+}

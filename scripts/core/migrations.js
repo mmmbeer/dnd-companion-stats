@@ -1,5 +1,4 @@
 import { STATE_VERSION, DEFAULT_COMPANION_ID } from './state.js';
-import { COMPANION_TYPES, DEFAULT_COMPANION_TYPE_ID } from '../data/companionTypes.js';
 
 const LEGACY_ACTION_MAP = {
   ASI: 'asi',
@@ -55,10 +54,13 @@ function normalizeLegacyList(list) {
   return Array.from(new Set(list.filter(Boolean)));
 }
 
-function migrateV1ToV2(stateV1) {
-  const companionType = COMPANION_TYPES[DEFAULT_COMPANION_TYPE_ID];
+function migrateV1ToV2(stateV1, defaultCompanionType, defaultCompanionTypeId) {
+  if (!defaultCompanionType) {
+    console.error('Missing default companion type data for migration.');
+    return null;
+  }
   const legacyCompanion = stateV1.blinkDog || {};
-  const baseAbilities = companionType.baseStats.abilities;
+  const baseAbilities = defaultCompanionType.baseStats.abilities;
   const abilityIncreases = buildAbilityIncreases(baseAbilities, legacyCompanion.abilities);
   const legacyFeats = normalizeLegacyList(legacyCompanion.feats);
   const legacyAttacks = normalizeLegacyList(legacyCompanion.attacks).filter(
@@ -75,8 +77,8 @@ function migrateV1ToV2(stateV1) {
     companions: {
       [DEFAULT_COMPANION_ID]: {
         id: DEFAULT_COMPANION_ID,
-        type: DEFAULT_COMPANION_TYPE_ID,
-        name: 'Blink Dog',
+        type: defaultCompanionTypeId,
+        name: defaultCompanionType.name || 'Companion',
         advancementHistory: migrateAdvancementHistory(legacyCompanion.advancementHistory),
         overrides: {
           abilityIncreases,
@@ -103,12 +105,17 @@ function migrateV2ToV3(stateV2) {
   };
 }
 
-export function migrateState(state) {
+export function migrateState(state, options = {}) {
   if (!state || typeof state !== 'object') return null;
   const version = Number(state.version) || 1;
   if (version === STATE_VERSION) return state;
   if (version === 1) {
-    const v2 = migrateV1ToV2(state);
+    const v2 = migrateV1ToV2(
+      state,
+      options.defaultCompanionType,
+      options.defaultCompanionTypeId
+    );
+    if (!v2) return null;
     return migrateV2ToV3(v2);
   }
   if (version === 2) return migrateV2ToV3(state);
