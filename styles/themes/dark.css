@@ -1,1 +1,13 @@
-:root[data-theme='dark']{--bg:#121212;--text:#eaeaea;--border:#444;}
+:root[data-theme='dark'] {
+  --bg-start: #1c1814;
+  --bg-end: #0f0d0b;
+  --bg: linear-gradient(160deg, var(--bg-start), var(--bg-end));
+  --surface: #211c17;
+  --surface-muted: #2b241e;
+  --text: #f2e9df;
+  --text-muted: #c8bdb0;
+  --border: #3a3128;
+  --accent: #c98a3c;
+  --overlay: rgba(10, 8, 6, 0.7);
+  --shadow: rgba(0, 0, 0, 0.4);
+}

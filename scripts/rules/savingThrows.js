@@ -1,1 +1,5 @@
-import{abilityMod}from'./abilities.js';export function saveDC(state){return 8+state.player.pb+abilityMod(state.blinkDog.abilities.dex);}
+import { abilityMod } from './abilities.js';
+
+export function saveDC(proficiencyBonus, dexScore) {
+  return 8 + proficiencyBonus + abilityMod(dexScore);
+}

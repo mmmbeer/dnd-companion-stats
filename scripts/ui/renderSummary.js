@@ -1,12 +1,16 @@
-import{abilityMod}from'../rules/abilities.js';
-export function renderSummary(state){
-const r=document.getElementById('summary');
-r.innerHTML=`
+export function renderSummary(view) {
+  const root = document.getElementById('summary');
+  const feats = view.feats.join(', ') || 'None';
+  const attacks = view.attacks.join(', ') || 'None';
+  const skills = view.specialSkills.join(', ') || 'None';
+
+  root.innerHTML = `
 <h2>Summary</h2>
-<p>Proficiency Bonus: +${state.player.pb}</p>
-<p>Blink Save DC: ${8+state.player.pb+abilityMod(state.blinkDog.abilities.dex)}</p>
-<p>Feats: ${state.blinkDog.feats.join(', ')||'—'}</p>
-<p>Attacks: ${state.blinkDog.attacks.join(', ')}</p>
-<p>Skills: ${state.blinkDog.specialSkills.join(', ')||'—'}</p>
+<p>Companion: ${view.companionName}</p>
+<p>Proficiency Bonus: +${view.proficiencyBonus}</p>
+<p>Blink Save DC: ${view.saveDc}</p>
+<p>Feats: ${feats}</p>
+<p>Attacks: ${attacks}</p>
+<p>Skills: ${skills}</p>
 `;
 }

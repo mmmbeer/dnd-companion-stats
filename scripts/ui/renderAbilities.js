@@ -1,9 +1,10 @@
-import{abilityMod}from'../rules/abilities.js';
-export function renderAbilities(state){
-const root=document.getElementById('abilities');
-root.innerHTML='<h2>Abilities</h2>';
-for(const[k,v]of Object.entries(state.blinkDog.abilities)){
-const d=document.createElement('div');
-d.textContent=`${k.toUpperCase()}: ${v} (${abilityMod(v)>=0?'+':''}${abilityMod(v)})`;
-root.appendChild(d);
-}}
+export function renderAbilities(view) {
+  const root = document.getElementById('abilities');
+  root.innerHTML = '<h2>Abilities</h2>';
+  for (const ability of view.abilities) {
+    const row = document.createElement('div');
+    const sign = ability.mod >= 0 ? '+' : '';
+    row.textContent = `${ability.label}: ${ability.score} (${sign}${ability.mod})`;
+    root.appendChild(row);
+  }
+}

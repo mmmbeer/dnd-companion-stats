@@ -1,1 +1,26 @@
-main{display:grid;gap:1rem;max-width:800px;}
+header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 2rem 0.75rem;
+}
+
+main {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 900px;
+  padding: 0 2rem 2rem;
+}
+
+section {
+  background: var(--surface);
+}
+
+@media (max-width: 700px) {
+  header,
+  main {
+    padding: 1rem 1.25rem;
+  }
+}
