@@ -18,7 +18,6 @@ import { renderFeatures } from './ui/renderFeatures.js';
 import { openConfirmModal } from './ui/modals/confirmModal.js';
 import { renderHealth } from './ui/renderHealth.js';
 import { renderSavingThrows } from './ui/renderSavingThrows.js';
-import { renderSummary } from './ui/renderSummary.js';
 import { renderEmptyState } from './ui/renderEmptyState.js';
 import { openAddCompanionModal } from './ui/modals/addCompanionModal.js';
 import { openAdvancementModal } from './ui/modals/advancementModal.js';
@@ -67,7 +66,6 @@ function render() {
   setCompanionViewVisibility(true);
   ensureCompanionHealth(companion, companionType);
   const view = buildCompanionView(state, companion, companionType);
-  renderSummary(view);
   renderHealth(view, (nextHealth) => {
     companion.health = {
       current: nextHealth.current,

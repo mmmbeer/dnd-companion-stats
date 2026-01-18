@@ -16,11 +16,7 @@ export function renderSkills(view) {
 
     const name = document.createElement('div');
     name.className = 'skill-name';
-    const title = document.createElement('strong');
-    title.textContent = skill.label;
-    const ability = document.createElement('span');
-    ability.textContent = skill.ability;
-    name.append(title, ability);
+    name.textContent = `${skill.label} (${skill.ability})`;
 
     const tags = document.createElement('div');
     tags.className = 'skill-tags';
@@ -32,7 +28,7 @@ export function renderSkills(view) {
       const icon = document.createElement('span');
       icon.className = 'icon icon-expert';
       icon.setAttribute('aria-hidden', 'true');
-      tag.appendChild(icon);
+      tag.append('(', icon, ')');
       tags.appendChild(tag);
     } else if (skill.proficient) {
       const tag = document.createElement('span');
@@ -42,13 +38,13 @@ export function renderSkills(view) {
       const icon = document.createElement('span');
       icon.className = 'icon icon-proficient';
       icon.setAttribute('aria-hidden', 'true');
-      tag.appendChild(icon);
+      tag.append('(', icon, ')');
       tags.appendChild(tag);
     }
 
     const values = document.createElement('div');
     values.className = 'skill-values';
-    values.textContent = `Mod ${formatSigned(skill.modifier)} | Bonus ${formatSigned(skill.bonus)}`;
+    values.textContent = formatSigned(skill.bonus);
 
     row.append(name, tags, values);
     list.appendChild(row);

@@ -378,19 +378,11 @@ button:disabled {
   gap: var(--space-2);
   border-bottom: 1px solid var(--border);
   padding-bottom: var(--space-1);
+  align-items: center;
 }
 
 .skill-name {
-  display: grid;
-  gap: var(--space-1);
-}
-
-.skill-name span {
-  font-family: var(--font-ui);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .skill-tags {
@@ -399,21 +391,30 @@ button:disabled {
 }
 
 .skill-tag {
-  border: 1px solid var(--border);
-  padding: 0.1rem 0.35rem;
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  border: none;
+  padding: 0;
+  font-size: 0.7rem;
   color: var(--text-muted);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 1.4rem;
 }
 
 .skill-tag .icon {
   width: 0.75rem;
   height: 0.75rem;
+}
+
+.feature-entry {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-ui);
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.feature-name {
+  font-style: italic;
+  font-weight: 600;
 }
 
 .skill-values {
