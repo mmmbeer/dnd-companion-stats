@@ -1,6 +1,7 @@
 {
   "defaultCompanionTypeId": "blink_dog",
   "types": [
-    "blink_dog.json"
+    "blink_dog.json",
+    "pseudo_dragon.json"
   ]
 }

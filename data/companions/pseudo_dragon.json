@@ -1,0 +1,107 @@
+{
+  "id": "pseudo_dragon",
+  "name": "Pseudodragon",
+  "baseStats": {
+    "abilities": {
+      "str": 6,
+      "dex": 17,
+      "con": 13,
+      "int": 10,
+      "wis": 14,
+      "cha": 12
+    },
+    "armorClass": {
+      "value": 15,
+      "note": "natural armor"
+    },
+    "hitPoints": {
+      "max": 21,
+      "formula": "6d4 + 6"
+    },
+    "speed": 15,
+    "saves": [
+      "dex",
+      "wis"
+    ],
+    "skills": {
+      "perception": "proficient",
+      "stealth": "proficient",
+      "insight": "proficient"
+    }
+  },
+  "traits": [
+    {
+      "name": "Limited Telepathy",
+      "description": [
+        "The pseudodragon can communicate simple ideas, emotions, and images telepathically with its master while within 100 feet."
+      ]
+    },
+    {
+      "name": "Magic Resistance",
+      "description": [
+        "The pseudodragon has advantage on saving throws against spells and other magical effects."
+      ]
+    },
+    {
+      "name": "Companion Bond",
+      "description": [
+        "The pseudodragon acts on its master's initiative. It obeys verbal commands (no action required).",
+        "If the master is incapacitated, the pseudodragon prioritizes evasion, warning allies, and defending its master."
+      ]
+    },
+    {
+      "name": "Venomous Sting",
+      "description": [
+        "The pseudodragon's sting carries potent magical venom.",
+        "A creature that fails its saving throw against this venom falls unconscious as described in the Sting attack."
+      ]
+    },
+    {
+      "name": "Flight",
+      "description": [
+        "The pseudodragon has a flying speed of 60 feet."
+      ]
+    }
+  ],
+  "advancement": {
+    "startsAtLevel": 4,
+    "even": {
+      "type": "asi",
+      "maxScore": 20
+    },
+    "odd": {
+      "choices": [
+        "feats",
+        "attacks",
+        "specialSkills"
+      ]
+    }
+  },
+  "baseAttacks": [
+    "Bite",
+    "Sting"
+  ],
+  "lists": {
+    "feats": [
+      "Draconic Watcher",
+      "Venom Savant",
+      "Winged Interference",
+      "Arcane Eavesdropper",
+      "Psychic Link",
+      "Draconic Resilience",
+      "Venom Control"
+    ],
+    "attacks": [
+      "Precision Sting",
+      "Wing Buffet",
+      "Venom Mark"
+    ],
+    "specialSkills": [
+      "Silent Glide",
+      "Draconic Menace",
+      "Venom Sense",
+      "Arcane Perch",
+      "Subtle Invisibility"
+    ]
+  }
+}

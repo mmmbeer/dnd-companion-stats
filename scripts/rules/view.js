@@ -11,7 +11,13 @@ import {
 } from './companion.js';
 import { getAdvancementContext } from './advancement.js';
 import { buildSkillView } from './skills.js';
-import { BASE_TRAITS, ACTION_DETAILS, FEAT_DETAILS, SPECIAL_SKILL_DETAILS } from '../data/featureDetails.js';
+import {
+  ACTION_DETAILS,
+  ACTION_DETAILS_BY_TYPE,
+  BASE_TRAITS,
+  FEAT_DETAILS,
+  SPECIAL_SKILL_DETAILS
+} from '../data/featureDetails.js';
 
 export function buildCompanionView(state, companion, companionType) {
   const playerLevel = state.player.level;
@@ -24,6 +30,11 @@ export function buildCompanionView(state, companion, companionType) {
   const savingThrowProficiencies = getSavingThrowProficiencies(companion, companionType);
   const skillProficiencies = getSkillProficiencies(companion, companionType);
   const saveDcValue = saveDC(pb, abilityScores.dex.score);
+  const actionDetails = {
+    ...ACTION_DETAILS,
+    ...(ACTION_DETAILS_BY_TYPE[companionType.id] || {})
+  };
+  const traitDetails = companionType.traits?.length ? companionType.traits : BASE_TRAITS;
 
   const armorClass = companionType.baseStats.armorClass;
   const hitPoints = companionType.baseStats.hitPoints;
@@ -57,8 +68,8 @@ export function buildCompanionView(state, companion, companionType) {
       }
     },
     features: {
-      traits: BASE_TRAITS,
-      actions: attacks.map((name) => ACTION_DETAILS[name]).filter(Boolean),
+      traits: traitDetails,
+      actions: attacks.map((name) => actionDetails[name]).filter(Boolean),
       feats: feats.map((name) => FEAT_DETAILS[name]).filter(Boolean),
       specialSkills: specialSkills.map((name) => SPECIAL_SKILL_DETAILS[name]).filter(Boolean)
     },
