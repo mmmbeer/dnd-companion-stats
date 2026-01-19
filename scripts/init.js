@@ -82,7 +82,12 @@ function render() {
   renderAbilities(view);
   renderSkills(view);
   renderStats(view);
-  renderFeatures(view);
+  renderFeatures(view, {
+    onDeleteAdvancement: (level) =>
+      requestAdvancementRemoval(companion, level),
+    onReplaceAdvancement: (level) =>
+      requestAdvancementReplacement(companion, companionType, level)
+  });
   updateLevelUpButton(view.advancement);
   saveState(state, { validateState });
 }
@@ -218,6 +223,58 @@ function applyCompanionLevelChange(companion, nextLevel) {
   }
 }
 
+function requestAdvancementRemoval(companion, level) {
+  const entry = companion.advancementHistory?.[level];
+  if (!entry) return;
+  openConfirmModal({
+    title: 'Remove Advancement',
+    message: `Remove the advancement recorded for level ${level}? This cannot be undone.`,
+    confirmLabel: 'Remove',
+    cancelLabel: 'Cancel',
+    onConfirm: () => {
+      delete companion.advancementHistory[level];
+      render();
+    }
+  });
+}
+
+function requestAdvancementReplacement(companion, companionType, level) {
+  const history = companion.advancementHistory || {};
+  if (!history[level]) return;
+  const tempHistory = { ...history };
+  delete tempHistory[level];
+  const tempCompanion = {
+    ...companion,
+    advancementHistory: tempHistory
+  };
+  const context = getAdvancementContext(tempCompanion, companionType, level);
+  if (!context.type || !context.canAdvance) {
+    openConfirmModal({
+      title: 'Replace Advancement',
+      message: context.blockedReason || 'No advancement available for this level.',
+      confirmLabel: 'Ok',
+      cancelLabel: 'Close',
+      onConfirm: () => {}
+    });
+    return;
+  }
+  openAdvancementModal({
+    companionName: companion.name,
+    companionTypeId: companionType.id,
+    advancement: context,
+    onConfirm: (action) => {
+      const result = applyAdvancement(tempCompanion, companionType, level, action);
+      if (!result.ok) {
+        console.error(result.error);
+        return;
+      }
+      companion.advancementHistory[level] = result.entry;
+      render();
+    },
+    onCancel: () => render()
+  });
+}
+
 function renderCompanionRoster() {
   if (!companionSelect || !companionNameInput || !newCompanionButton || !deleteCompanionButton) {
     return;
@@ -320,6 +377,7 @@ function createCompanionFromInput({ typeId, name, playerLevel }) {
 
 function requestCompanionLevelChange(companion, nextLevel, onApplied) {
   if (!companion) return;
+  const previousLevel = companion.playerLevel;
   if (nextLevel === companion.playerLevel) {
     onApplied?.();
     return;
@@ -345,6 +403,12 @@ function requestCompanionLevelChange(companion, nextLevel, onApplied) {
   }
   applyCompanionLevelChange(companion, nextLevel);
   onApplied?.();
+  if (nextLevel - previousLevel > 1) {
+    const companionType = getCompanionType(companion.type);
+    if (companionType) {
+      openCompanionAdvancementFlow(companion, companionType, nextLevel);
+    }
+  }
 }
 
 function openCompanionAdvancementFlow(companion, companionType, playerLevel) {

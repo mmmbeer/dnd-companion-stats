@@ -49,6 +49,7 @@ export function buildCompanionView(state, companion, companionType) {
     proficiencyBonus: pb,
     companionName: companion.name,
     companionTypeId: companionType.id,
+    advancementHistory: companion.advancementHistory || {},
     feats,
     attacks,
     specialSkills,

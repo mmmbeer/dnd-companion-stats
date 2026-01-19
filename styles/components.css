@@ -122,6 +122,11 @@ button {
   -webkit-mask-image: url('../assets/icons/trash.svg');
 }
 
+.icon-exchange {
+  mask-image: url('../assets/icons/exchange-horizontal-svgrepo-com.svg');
+  -webkit-mask-image: url('../assets/icons/exchange-horizontal-svgrepo-com.svg');
+}
+
 .icon-close {
   mask-image: url('../assets/icons/close.svg');
   -webkit-mask-image: url('../assets/icons/close.svg');
@@ -536,6 +541,45 @@ button:disabled {
 .features-group {
   display: grid;
   gap: var(--space-3);
+}
+
+.advancement-history {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.advancement-entry {
+  border: 1px solid var(--border);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-muted);
+  border-radius: var(--radius-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.advancement-entry-details {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.advancement-entry-level {
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.advancement-entry-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.advancement-entry-actions {
+  display: flex;
+  gap: var(--space-1);
 }
 
 .feature-card {
