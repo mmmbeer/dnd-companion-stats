@@ -13,7 +13,7 @@ export function renderFeatures(view, { onDeleteAdvancement, onReplaceAdvancement
   groups.appendChild(buildTextGroup('Traits', view.features.traits));
   groups.appendChild(buildTextGroup('Actions', view.features.actions));
   groups.appendChild(buildGroup('Feats', view.features.feats));
-  groups.appendChild(buildGroup('Special Skills', view.features.specialSkills));
+  groups.appendChild(buildGroup('Learned Traits', view.features.specialSkills));
   groups.appendChild(
     buildAdvancementHistorySection(view, {
       onDeleteAdvancement,
@@ -186,10 +186,10 @@ function formatAdvancementEntry(entry) {
     return `Feat: ${entry.value}`;
   }
   if (entry.type === 'attack') {
-    return `Attack: ${entry.value}`;
+    return `Action: ${entry.value}`;
   }
   if (entry.type === 'specialSkill') {
-    return `Special Skill: ${entry.value}`;
+    return `Trait: ${entry.value}`;
   }
   return 'Advancement';
 }

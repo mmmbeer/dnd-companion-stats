@@ -3,7 +3,7 @@ export function renderSummary(view) {
   if (!root) return;
   const feats = (view.feats || []).join(', ') || 'None';
   const attacks = (view.attacks || []).join(', ') || 'None';
-  const skills = (view.specialSkills || []).join(', ') || 'None';
+  const traits = (view.specialSkills || []).join(', ') || 'None';
 
   root.innerHTML = `
     <div class="stat-grid">
@@ -23,12 +23,12 @@ export function renderSummary(view) {
         <p>${feats}</p>
       </div>
       <div class="summary-list">
-        <h3>Attacks</h3>
+        <h3>Actions</h3>
         <p>${attacks}</p>
       </div>
       <div class="summary-list">
-        <h3>Special Skills</h3>
-        <p>${skills}</p>
+        <h3>Traits</h3>
+        <p>${traits}</p>
       </div>
     </div>
   `;

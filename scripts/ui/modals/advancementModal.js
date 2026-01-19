@@ -4,8 +4,8 @@ import { abilityMod } from '../../rules/abilities.js';
 
 const CATEGORY_LABELS = {
   feats: 'Feats',
-  attacks: 'Attacks',
-  specialSkills: 'Skills'
+  attacks: 'Actions',
+  specialSkills: 'Traits'
 };
 
 export function openAdvancementModal({

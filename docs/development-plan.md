@@ -176,8 +176,8 @@ Responsibilities:
 - Enforce caps
 - Write advancement history
 - Map explicit advancement levels:
-  - Skills: 4, 7, 8, 11, 12, 15, 16
-  - Feat or attack: 6, 10, 14, 18
+  - Traits: 4, 7, 8, 11, 12, 15, 16
+  - Feat or action: 6, 10, 14, 18
   - Ability score increase: 5, 9, 13, 17
 
 API:
@@ -200,17 +200,17 @@ Why modal:
 - Forces completion or cancel
 - Guides users step-by-step
 
-Skill advancement flow:
+Trait advancement flow:
 1. Open modal
 2. Explain advancement type
-3. Choose skill
+3. Choose trait
 4. Confirm
 5. Apply and persist
 
-Feat or attack flow:
+Feat or action flow:
 1. Open modal
 2. Explain advancement type
-3. Choose category (feat or attack)
+3. Choose category (feat or action)
 4. Choose specific option
 5. Confirm
 6. Apply and persist

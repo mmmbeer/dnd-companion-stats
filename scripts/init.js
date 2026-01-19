@@ -554,7 +554,7 @@ function setupCompanionControls() {
       companionTypeSelect.value = activeCompanion.type;
       openConfirmModal({
         title: 'Change Companion Type',
-        message: `${activeCompanion.name} has leveled features or changes. Switching types will reset their advancements back to base stats, attacks, features, and skills. Continue?`,
+        message: `${activeCompanion.name} has leveled features or changes. Switching types will reset their advancements back to base stats, actions, feats, and traits. Continue?`,
         confirmLabel: 'Change Type',
         cancelLabel: 'Cancel',
         onConfirm: () => {
