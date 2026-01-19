@@ -3,51 +3,44 @@
   "name": "Tressym",
   "baseStats": {
     "abilities": {
-      "str": 6,
-      "dex": 16,
-      "con": 12,
+      "str": 3,
+      "dex": 15,
+      "con": 10,
       "int": 11,
-      "wis": 14,
-      "cha": 13
+      "wis": 12,
+      "cha": 12
     },
     "armorClass": {
-      "value": 14,
-      "note": "natural agility"
+      "value": 12
     },
     "hitPoints": {
-      "max": 18,
-      "formula": "5d4 + 5"
+      "max": 5,
+      "formula": "2d4"
     },
-    "speed": 30,
-    "saves": [
-      "dex",
-      "wis"
-    ],
+    "speed": 40,
+    "saves": [],
     "skills": {
-      "perception": "proficient",
-      "stealth": "proficient",
-      "investigation": "proficient"
+      "perception": "expertise",
+      "stealth": "proficient"
     }
   },
   "traits": [
     {
-      "name": "Keen Senses",
+      "name": "Detect Invisibility",
       "description": [
-        "The tressym has advantage on Wisdom (Perception) checks that rely on sight or smell."
+        "Within 60 feet of the tressym, magical invisibility does not obscure creatures or objects from the tressym's sight."
       ]
     },
     {
-      "name": "Spell Sense",
+      "name": "Keen Smell",
       "description": [
-        "The tressym can sense the presence of magic within 30 feet.",
-        "This sense detects active spells, magical effects, and illusions, but not their exact nature or school."
+        "The tressym has advantage on Wisdom (Perception) checks that rely on smell."
       ]
     },
     {
-      "name": "Companion Bond",
+      "name": "Poison Sense",
       "description": [
-        "The tressym acts on its master's initiative. It obeys verbal commands (no action required).",
-        "If the master is incapacitated, the tressym prioritizes warning allies, evasion, and disrupting hostile spellcasters."
+        "The tressym can determine whether a substance is poisonous by taste, touch, or smell."
       ]
     },
     {
@@ -58,42 +51,156 @@
     }
   ],
   "advancement": {
-    "startsAtLevel": 4,
-    "even": {
-      "type": "asi",
+    "abilityScoreIncreases": {
+      "levels": [
+        5,
+        9,
+        13,
+        17,
+        20
+      ],
       "maxScore": 20
     },
-    "odd": {
+    "skills": {
+      "levels": [
+        4,
+        8,
+        12,
+        16,
+        19
+      ],
       "choices": [
         "feats",
         "attacks",
         "specialSkills"
       ]
+    },
+    "featsOrAttacks": {
+      "levels": [],
+      "choices": []
     }
   },
   "baseAttacks": [
-    "Claws"
+    {
+      "name": "Claws",
+      "description": [
+        "Melee Weapon Attack: +4 to hit, reach 5 ft., one target.",
+        "Hit: 4 (1d4 + 2) slashing damage."
+      ]
+    }
   ],
   "lists": {
     "feats": [
-      "Spell Sniffer",
-      "Illusion Breaker",
-      "Arcane Interference",
-      "Vigilant Perch",
-      "Nine Lives",
-      "Arcane Tail Lash"
+      {
+        "name": "Spell Sniffer",
+        "description": [
+          "The range of Spell Sense increases to 60 feet.",
+          "In addition, the tressym can distinguish illusions from other magical effects at a glance."
+        ]
+      },
+      {
+        "name": "Illusion Breaker",
+        "description": [
+          "When the tressym touches an illusion, the illusion is revealed to all creatures within 10 feet until the end of the tressym's next turn."
+        ]
+      },
+      {
+        "name": "Arcane Interference",
+        "description": [
+          "When a creature within 30 feet casts a spell, the tressym can use its reaction to impose disadvantage on one attack roll or saving throw caused by that spell.",
+          "Uses equal to the tressym's proficiency bonus per long rest."
+        ]
+      },
+      {
+        "name": "Vigilant Perch",
+        "description": [
+          "While perched on its master, the tressym grants advantage on initiative rolls.",
+          "It also grants advantage on the first saving throw against a spell the master makes each combat."
+        ]
+      },
+      {
+        "name": "Arcane Tail Lash",
+        "description": [
+          "When a creature within 5 feet of the tressym casts a spell, the tressym can use its reaction to make a Claws attack against that creature."
+        ]
+      }
     ],
     "attacks": [
-      "Arcane Disrupting Claws",
-      "Wing Slash",
-      "Arcane Pounce",
-      "Spellrake"
+      {
+        "name": "Arcane Pounce",
+        "description": [
+          "Melee Weapon Attack: +5 to hit, reach 5 ft., one target.",
+          "Hit: 1d8 + 2 slashing damage.",
+          "If the tressym flew at least 20 feet straight toward the target this turn, the target must succeed on a Dexterity saving throw or be knocked prone."
+        ]
+      },
+      {
+        "name": "Spellrake",
+        "description": [
+          "Melee Weapon Attack: +5 to hit, reach 5 ft., one target.",
+          "Hit: 1d4 + 2 slashing damage plus 1d6 force damage.",
+          "Until the start of the tressym's next turn, the target has disadvantage on spell attack rolls."
+        ]
+      },
+      {
+        "name": "Arcane Disrupting Claws",
+        "description": [
+          "Melee Weapon Attack: +5 to hit, reach 5 ft., one target.",
+          "Hit: 1d6 + 2 slashing damage.",
+          "If the target is concentrating on a spell, it has disadvantage on the saving throw to maintain concentration."
+        ]
+      },
+      {
+        "name": "Wing Slash",
+        "description": [
+          "Melee Weapon Attack: +5 to hit, reach 5 ft., one target.",
+          "Hit: 1d4 + 2 slashing damage.",
+          "The target cannot take reactions until the start of its next turn."
+        ]
+      }
     ],
     "specialSkills": [
-      "Silent Watcher",
-      "Arcane Alert",
-      "Illusion Sense",
-      "Spell Anchor"
+      {
+        "name": "Spell Sense",
+        "description": [
+          "The tressym gains a special sense out to 30 feet that detects active spell effects, magical auras, and creatures concentrating on spells.",
+          "This sense reveals direction and general intensity but not spell details.",
+          "It is blocked by total cover and suppressed in antimagic fields."
+        ]
+      },
+      {
+        "name": "Illusion Sense",
+        "description": [
+          "The tressym automatically recognizes visual illusions when it sees them, though it must still interact with them normally to reveal them to others."
+        ]
+      },
+      {
+        "name": "Silent Watcher",
+        "description": [
+          "The tressym does not trigger magical alarms, glyphs, or wards while flying, unless it chooses to."
+        ]
+      },
+      {
+        "name": "Arcane Alert",
+        "description": [
+          "As a bonus action, the tressym warns one creature it can see within 30 feet.",
+          "That creature has advantage on the next saving throw it makes against a spell before the end of its next turn."
+        ]
+      },
+      {
+        "name": "Nine Lives",
+        "description": [
+          "When the tressym is reduced to 0 hit points but not killed outright, it instead drops to 1 hit point and becomes invisible until the end of its next turn.",
+          "Once this trait is used, it cannot be used again until the tressym finishes a long rest."
+        ]
+      },
+      {
+        "name": "Arcane Savant",
+        "description": [
+          "The tressym gains expertise in Perception and proficiency in Arcana.",
+          "In addition, the tressym can use its Perception skill in place of Arcana when making ability checks to notice magical effects, illusions, or ongoing spells."
+        ]
+      }
     ]
   }
 }

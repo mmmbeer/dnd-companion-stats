@@ -4,36 +4,32 @@
   "baseStats": {
     "abilities": {
       "str": 6,
-      "dex": 17,
+      "dex": 15,
       "con": 13,
       "int": 10,
-      "wis": 14,
-      "cha": 12
+      "wis": 12,
+      "cha": 10
     },
     "armorClass": {
-      "value": 15,
+      "value": 13,
       "note": "natural armor"
     },
     "hitPoints": {
-      "max": 21,
-      "formula": "6d4 + 6"
+      "max": 7,
+      "formula": "2d4 + 2"
     },
     "speed": 15,
-    "saves": [
-      "dex",
-      "wis"
-    ],
+    "saves": [],
     "skills": {
       "perception": "proficient",
-      "stealth": "proficient",
-      "insight": "proficient"
+      "stealth": "proficient"
     }
   },
   "traits": [
     {
-      "name": "Limited Telepathy",
+      "name": "Keen Senses",
       "description": [
-        "The pseudodragon can communicate simple ideas, emotions, and images telepathically with its master while within 100 feet."
+        "The pseudodragon has advantage on Wisdom (Perception) checks that rely on sight, hearing, or smell."
       ]
     },
     {
@@ -43,59 +39,183 @@
       ]
     },
     {
-      "name": "Companion Bond",
+      "name": "Limited Telepathy",
       "description": [
-        "The pseudodragon acts on its master's initiative. It obeys verbal commands (no action required).",
-        "If the master is incapacitated, the pseudodragon prioritizes evasion, warning allies, and defending its master."
-      ]
-    },
-    {
-      "name": "Venomous Sting",
-      "description": [
-        "The pseudodragon's sting carries potent magical venom capable of incapacitating foes."
+        "The pseudodragon can magically communicate simple ideas, emotions, and images telepathically with any creature within 100 feet of it that can understand a language."
       ]
     }
   ],
   "advancement": {
-    "startsAtLevel": 4,
-    "even": {
-      "type": "asi",
+    "abilityScoreIncreases": {
+      "levels": [
+        5,
+        9,
+        13,
+        17,
+        20
+      ],
       "maxScore": 20
     },
-    "odd": {
+    "skills": {
+      "levels": [
+        4,
+        8,
+        12,
+        16,
+        19
+      ],
       "choices": [
         "feats",
         "attacks",
         "specialSkills"
       ]
+    },
+    "featsOrAttacks": {
+      "levels": [],
+      "choices": []
     }
   },
   "baseAttacks": [
-    "Bite",
-    "Sting"
+    {
+      "name": "Bite",
+      "description": [
+        "Melee Weapon Attack: +5 to hit, reach 5 ft., one target.",
+        "Hit: 5 (1d6 + 2) piercing damage."
+      ]
+    },
+    {
+      "name": "Sting",
+      "description": [
+        "Melee Weapon Attack: +4 to hit, reach 5 ft., one creature.",
+        "Hit: 4 (1d4 + 2) piercing damage, and the target must succeed on a Constitution saving throw or become poisoned for 1 hour.",
+        "If the saving throw fails by 5 or more, the target is unconscious for the same duration, or until it takes damage or another creature uses an action to shake it awake."
+      ]
+    }
   ],
   "lists": {
     "feats": [
-      "Draconic Watcher",
-      "Venom Savant",
-      "Winged Interference",
-      "Arcane Eavesdropper",
-      "Psychic Link",
-      "Draconic Resilience",
-      "Venom Control"
+      {
+        "name": "Silent Flight",
+        "description": [
+          "The pseudodragon's movement does not provoke opportunity attacks."
+        ]
+      },
+      {
+        "name": "Winged Interference",
+        "description": [
+          "When a creature within 5 feet of the pseudodragon attacks its master, the pseudodragon can use its reaction to impose disadvantage on the attack roll.",
+          "This reaction can be used a number of times equal to the pseudodragon's proficiency bonus per long rest."
+        ]
+      },
+      {
+        "name": "Arcane Perch",
+        "description": [
+          "While perched on its master, the pseudodragon grants advantage on one saving throw against a spell once per long rest."
+        ]
+      },
+      {
+        "name": "Subtle Invisibility",
+        "description": [
+          "As a bonus action, the pseudodragon becomes invisible until the start of its next turn or until it makes an attack.",
+          "Uses equal to the pseudodragon's proficiency bonus per long rest."
+        ]
+      },
+      {
+        "name": "Draconic Focus",
+        "description": [
+          "Once per long rest, when the pseudodragon forces a creature to make a saving throw, it can impose disadvantage on that saving throw."
+        ]
+      },
+      {
+        "name": "Adaptive Venom",
+        "description": [
+          "Prerequisite: Venom Control trait.",
+          "The pseudodragon can alter the nature of its venom in response to different prey.",
+          "When the pseudodragon hits a creature with Sting, it can choose one of the following damage types for the venom instead of poison: acid, lightning, psychic.",
+          "The chosen damage type replaces the poison damage and poison condition for that attack.",
+          "Any additional effects granted by Venom Control apply normally.",
+          "Once the pseudodragon changes the damage type of its Sting in this way, it cannot do so again until it finishes a short or long rest."
+        ]
+      }
     ],
     "attacks": [
-      "Precision Sting",
-      "Wing Buffet",
-      "Venom Mark",
-      "Psychic Needle"
+      {
+        "name": "Precision Sting",
+        "description": [
+          "Melee Weapon Attack: +5 to hit, reach 5 ft., one target.",
+          "Hit: 1d4 + 2 piercing damage plus venom.",
+          "On a failed saving throw, the target's speed becomes 0 until the end of its next turn."
+        ]
+      },
+      {
+        "name": "Wing Buffet",
+        "description": [
+          "Melee Weapon Attack: +5 to hit, reach 5 ft., one target.",
+          "Hit: 1d6 + 2 bludgeoning damage.",
+          "The target must succeed on a Strength saving throw or be pushed 10 feet."
+        ]
+      },
+      {
+        "name": "Venom Mark",
+        "description": [
+          "Melee Weapon Attack: +5 to hit, reach 5 ft., one creature.",
+          "Hit: 1d4 + 2 piercing damage.",
+          "Until the end of the pseudodragon's next turn, the pseudodragon and its master have advantage on the first attack roll made against the target."
+        ]
+      },
+      {
+        "name": "Psychic Needle",
+        "description": [
+          "Melee Weapon Attack: +5 to hit, reach 5 ft., one target.",
+          "Hit: 1d6 + 2 psychic damage.",
+          "The target has disadvantage on the next concentration check it makes before the end of its next turn."
+        ]
+      }
     ],
     "specialSkills": [
-      "Silent Flight",
-      "Venom Sense",
-      "Arcane Perch",
-      "Subtle Invisibility",
-      "Draconic Focus"
+      {
+        "name": "Draconic Watcher",
+        "description": [
+          "The pseudodragon gains advantage on initiative rolls and cannot be surprised while conscious."
+        ]
+      },
+      {
+        "name": "Arcane Eavesdropper",
+        "description": [
+          "The pseudodragon gains a special sense out to 30 feet that detects active spellcasting, magical effects, or creatures concentrating on spells.",
+          "This sense reveals direction and approximate intensity but not spell details.",
+          "It is blocked by total cover and suppressed in antimagic fields."
+        ]
+      },
+      {
+        "name": "Venom Savant",
+        "description": [
+          "When a creature fails its saving throw against the pseudodragon's Sting, the poisoned condition lasts an additional hour."
+        ]
+      },
+      {
+        "name": "Venom Control",
+        "description": [
+          "When the pseudodragon hits a creature with its Sting, the target makes its Constitution saving throw with disadvantage.",
+          "On a failed saving throw, the creature is unconscious for the duration specified by the Sting.",
+          "On a successful saving throw, the creature takes additional poison damage equal to half the Sting's damage (rounded down)."
+        ]
+      },
+      {
+        "name": "Psychic Link",
+        "description": [
+          "The range of the pseudodragon's telepathy with its master increases to 1 mile while on the same plane of existence.",
+          "Once per long rest, the pseudodragon can use its reaction to transmit a brief sensory snapshot to its master."
+        ]
+      },
+      {
+        "name": "Draconic Resilience",
+        "description": [
+          "The pseudodragon gains proficiency in Constitution saving throws.",
+          "When reduced to 0 hit points but not killed outright, it instead drops to 1 hit point and becomes invisible until the end of its next turn.",
+          "Once this trait is used, it cannot be used again until the pseudodragon finishes a long rest."
+        ]
+      }
     ]
   }
 }

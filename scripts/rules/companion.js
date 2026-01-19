@@ -13,6 +13,13 @@ function listFromHistory(advancementHistory, actionType) {
   return items;
 }
 
+function listNames(list) {
+  if (!Array.isArray(list)) return [];
+  return list
+    .map((entry) => (typeof entry === 'string' ? entry : entry?.name))
+    .filter(Boolean);
+}
+
 export function getAbilityScores(companion, companionType) {
   const baseAbilities = companionType.baseStats.abilities;
   const abilityIncreases = companion.overrides?.abilityIncreases || {};
@@ -47,7 +54,7 @@ export function getKnownFeats(companion, companionType) {
 }
 
 export function getKnownAttacks(companion, companionType) {
-  const base = companionType.baseAttacks || [];
+  const base = listNames(companionType.baseAttacks || []);
   const overrides = companion.overrides?.attacks || [];
   const fromHistory = listFromHistory(companion.advancementHistory, 'attack');
   return Array.from(new Set([...base, ...overrides, ...fromHistory]));

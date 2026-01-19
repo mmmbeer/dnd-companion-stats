@@ -8,7 +8,11 @@ import { loadState, saveState } from './core/storage.js';
 import { validateState } from './core/validation.js';
 import { loadCompanionTypes } from './companions/loader.js';
 import { getCompanionType, listCompanionTypes } from './companions/registry.js';
-import { applyAdvancement, getAdvancementContext } from './rules/advancement.js';
+import {
+  applyAdvancement,
+  getAdvancementContext,
+  getAdvancementLevels
+} from './rules/advancement.js';
 import { buildCompanionView } from './rules/view.js';
 import { renderAbilities } from './ui/renderAbilities.js';
 import { renderStats } from './ui/renderStats.js';
@@ -419,10 +423,11 @@ function requestCompanionLevelChange(companion, nextLevel, onApplied) {
 }
 
 function getPendingAdvancementLevels(companion, companionType, playerLevel) {
-  const startLevel = companionType.advancement.startsAtLevel;
-  if (playerLevel < startLevel) return;
+  const advancementLevels = getAdvancementLevels(companionType);
+  if (!advancementLevels.length) return;
   const levels = [];
-  for (let level = startLevel; level <= playerLevel; level += 1) {
+  for (const level of advancementLevels) {
+    if (level > playerLevel) break;
     const context = getAdvancementContext(companion, companionType, level);
     if (context.type && context.canAdvance) {
       levels.push(level);

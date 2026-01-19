@@ -13,6 +13,23 @@ function isStringArrayOrEmpty(value) {
   return value === undefined || isStringArray(value);
 }
 
+function isNumberArray(value) {
+  return Array.isArray(value) && value.every((entry) => Number.isFinite(entry));
+}
+
+function isFeatureEntry(entry) {
+  return (
+    isPlainObject(entry)
+    && typeof entry.name === 'string'
+    && entry.name.trim()
+    && isStringArrayOrEmpty(entry.description)
+  );
+}
+
+function isFeatureEntryArray(value) {
+  return Array.isArray(value) && value.every((entry) => isFeatureEntry(entry));
+}
+
 function isNumber(value) {
   return Number.isFinite(value);
 }
@@ -89,33 +106,45 @@ export function validateCompanionType(type) {
   if (!isPlainObject(advancement)) {
     addError(errors, 'advancement must be an object.');
   } else {
-    if (!isNumber(advancement.startsAtLevel)) {
-      addError(errors, 'advancement.startsAtLevel must be a number.');
+    const asi = advancement.abilityScoreIncreases;
+    if (!isPlainObject(asi) || !isNumberArray(asi.levels) || !isNumber(asi.maxScore)) {
+      addError(
+        errors,
+        'advancement.abilityScoreIncreases requires levels and numeric maxScore.'
+      );
     }
 
-    const even = advancement.even;
-    if (!isPlainObject(even) || even.type !== 'asi' || !isNumber(even.maxScore)) {
-      addError(errors, 'advancement.even requires type "asi" and numeric maxScore.');
+    const skills = advancement.skills;
+    if (!isPlainObject(skills) || !isNumberArray(skills.levels) || !isStringArray(skills.choices)) {
+      addError(errors, 'advancement.skills requires levels and choices.');
     }
 
-    const odd = advancement.odd;
-    if (!isPlainObject(odd) || !isStringArray(odd.choices)) {
-      addError(errors, 'advancement.odd.choices must be an array of strings.');
+    const featsOrAttacks = advancement.featsOrAttacks;
+    if (
+      !isPlainObject(featsOrAttacks)
+      || !isNumberArray(featsOrAttacks.levels)
+      || !isStringArray(featsOrAttacks.choices)
+    ) {
+      addError(errors, 'advancement.featsOrAttacks requires levels and choices.');
     }
   }
 
-  if (!isStringArray(type.baseAttacks)) {
-    addError(errors, 'baseAttacks must be an array of strings.');
+  if (!isFeatureEntryArray(type.baseAttacks)) {
+    addError(errors, 'baseAttacks must be an array of named entries with descriptions.');
   }
 
   const lists = type.lists;
   if (!isPlainObject(lists)) {
     addError(errors, 'lists must be an object.');
   } else {
-    if (!isStringArray(lists.feats)) addError(errors, 'lists.feats must be an array of strings.');
-    if (!isStringArray(lists.attacks)) addError(errors, 'lists.attacks must be an array of strings.');
-    if (!isStringArray(lists.specialSkills)) {
-      addError(errors, 'lists.specialSkills must be an array of strings.');
+    if (!isFeatureEntryArray(lists.feats)) {
+      addError(errors, 'lists.feats must be an array of named entries with descriptions.');
+    }
+    if (!isFeatureEntryArray(lists.attacks)) {
+      addError(errors, 'lists.attacks must be an array of named entries with descriptions.');
+    }
+    if (!isFeatureEntryArray(lists.specialSkills)) {
+      addError(errors, 'lists.specialSkills must be an array of named entries with descriptions.');
     }
   }
 

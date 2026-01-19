@@ -1,12 +1,6 @@
 import { openModal } from './modal.js';
 import { categoryToActionType } from '../../rules/advancement.js';
 import { abilityMod } from '../../rules/abilities.js';
-import {
-  ACTION_DETAILS,
-  ACTION_DETAILS_BY_TYPE,
-  FEAT_DETAILS,
-  SPECIAL_SKILL_DETAILS
-} from '../../data/featureDetails.js';
 
 const CATEGORY_LABELS = {
   feats: 'Feats',
@@ -27,10 +21,6 @@ export function openAdvancementModal({
   let selectedAbility = null;
   let selectedCategory = null;
   let selectedChoice = null;
-  const actionDetails = {
-    ...ACTION_DETAILS,
-    ...(ACTION_DETAILS_BY_TYPE[companionTypeId] || {})
-  };
 
   const body = document.createElement('div');
   const modal = openModal({
@@ -163,25 +153,18 @@ export function openAdvancementModal({
     const options = document.createElement('div');
     options.className = 'option-list';
 
-    const detailLookup = {
-      feats: FEAT_DETAILS,
-      attacks: actionDetails,
-      specialSkills: SPECIAL_SKILL_DETAILS
-    };
-
     for (const option of list) {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'option-card';
-      const details = detailLookup[selectedCategory]?.[option] || null;
-      const name = details?.name || option;
+      const name = option?.name || option;
 
       const title = document.createElement('h4');
       title.textContent = name;
       button.appendChild(title);
 
-      const descriptions = Array.isArray(details?.description) && details.description.length
-        ? details.description
+      const descriptions = Array.isArray(option?.description) && option.description.length
+        ? option.description
         : ['Details unavailable.'];
       for (const line of descriptions) {
         const entry = document.createElement('p');
@@ -189,11 +172,11 @@ export function openAdvancementModal({
         button.appendChild(entry);
       }
 
-      if (selectedChoice === option) {
+      if (selectedChoice === name) {
         button.classList.add('is-selected');
       }
       button.addEventListener('click', () => {
-        selectedChoice = option;
+        selectedChoice = name;
         modal.setConfirmEnabled(true);
         if (hasNext) {
           modal.setExtraEnabled(0, true);

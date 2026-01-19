@@ -175,13 +175,18 @@ Responsibilities:
 - Prevent duplicates
 - Enforce caps
 - Write advancement history
+- Map explicit advancement levels:
+  - Skills: 4, 7, 8, 11, 12, 15, 16
+  - Feat or attack: 6, 10, 14, 18
+  - Ability score increase: 5, 9, 13, 17
 
 API:
 ```js
-canAdvance(companion, playerLevel)
+canAdvance(companion, companionType, playerLevel)
 getAdvancementType(companionType, playerLevel)
-getAvailableChoices(companion, companionType, level)
-applyAdvancement(companion, action)
+getAdvancementContext(companion, companionType, playerLevel)
+getAdvancementLevels(companionType)
+applyAdvancement(companion, companionType, playerLevel, action)
 ```
 
 No UI logic allowed here.
@@ -195,15 +200,22 @@ Why modal:
 - Forces completion or cancel
 - Guides users step-by-step
 
-Odd-level flow:
+Skill advancement flow:
 1. Open modal
 2. Explain advancement type
-3. Choose category (feat / attack / skill)
+3. Choose skill
+4. Confirm
+5. Apply and persist
+
+Feat or attack flow:
+1. Open modal
+2. Explain advancement type
+3. Choose category (feat or attack)
 4. Choose specific option
 5. Confirm
 6. Apply and persist
 
-Even-level flow:
+Ability score increase flow:
 1. Open modal
 2. Explain ASI
 3. Select ability

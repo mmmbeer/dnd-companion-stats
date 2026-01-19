@@ -168,24 +168,33 @@ Key points:
   },
 
   "advancement": {
-    "startsAtLevel": 4,
-    "even": {
-      "type": "asi",
+    "abilityScoreIncreases": {
+      "levels": [5, 9, 13, 17],
       "maxScore": 20
     },
-    "odd": {
-      "choices": ["feats", "attacks", "specialSkills"]
+    "skills": {
+      "levels": [4, 7, 8, 11, 12, 15, 16],
+      "choices": ["specialSkills"]
+    },
+    "featsOrAttacks": {
+      "levels": [6, 10, 14, 18],
+      "choices": ["feats", "attacks"]
     }
   },
 
-  "saveDC": {
-    "formula": "8 + pb + dex"
-  },
-
   "lists": {
-    "feats": ["Phase Skirmisher", "Pack Harrier"],
-    "attacks": ["Phase Pounce", "Blink Ram"],
-    "specialSkills": ["Flickering Hover", "Blinkcasting"]
+    "feats": [
+      { "name": "Phase Skirmisher", "description": ["..."] },
+      { "name": "Pack Harrier", "description": ["..."] }
+    ],
+    "attacks": [
+      { "name": "Phase Pounce", "description": ["..."] },
+      { "name": "Blink Ram", "description": ["..."] }
+    ],
+    "specialSkills": [
+      { "name": "Flickering Hover", "description": ["..."] },
+      { "name": "Blinkcasting", "description": ["..."] }
+    ]
   }
 }
 ```
@@ -224,14 +233,19 @@ This allows:
 * Prevent duplicates
 * Enforce caps
 * Write advancement history
+* Map explicit advancement levels:
+  * Skills: 4, 7, 8, 11, 12, 15, 16
+  * Feat or attack: 6, 10, 14, 18
+  * Ability score increase: 5, 9, 13, 17
 
 ### API
 
 ```js
-canAdvance(companion, playerLevel)
+canAdvance(companion, companionType, playerLevel)
 getAdvancementType(companionType, playerLevel)
-getAvailableChoices(companion, companionType, level)
-applyAdvancement(companion, action)
+getAdvancementContext(companion, companionType, playerLevel)
+getAdvancementLevels(companionType)
+applyAdvancement(companion, companionType, playerLevel, action)
 ```
 
 No UI logic allowed here.
@@ -246,16 +260,24 @@ No UI logic allowed here.
 * Forces completion or cancel
 * Guides users step-by-step
 
-### Modal Flow (Odd Level)
+### Modal Flow (Skill Advancement)
 
 1. Open modal
 2. Explain advancement type
-3. Choose category (feat / attack / skill)
+3. Choose skill
+4. Confirm
+5. Apply + persist
+
+### Modal Flow (Feat or Attack)
+
+1. Open modal
+2. Explain advancement type
+3. Choose category (feat or attack)
 4. Choose specific option
 5. Confirm
 6. Apply + persist
 
-### Modal Flow (Even Level)
+### Modal Flow (Ability Score Increase)
 
 1. Open modal
 2. Explain ASI

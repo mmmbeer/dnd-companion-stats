@@ -17,9 +17,55 @@ const ACTION_TO_CATEGORY = {
   specialSkill: 'specialSkills'
 };
 
+const DEFAULT_SKILL_CHOICES = ['specialSkills'];
+const DEFAULT_FEAT_ATTACK_CHOICES = ['feats', 'attacks'];
+
+function normalizeFeatureEntries(list) {
+  if (!Array.isArray(list)) return [];
+  return list
+    .map((entry) => {
+      if (typeof entry === 'string') {
+        return { name: entry, description: [] };
+      }
+      if (entry && typeof entry === 'object' && typeof entry.name === 'string') {
+        return {
+          name: entry.name,
+          description: Array.isArray(entry.description) ? entry.description : []
+        };
+      }
+      return null;
+    })
+    .filter((entry) => entry && entry.name);
+}
+
+function getAdvancementDefinition(companionType, playerLevel) {
+  const advancement = companionType.advancement || {};
+  const asi = advancement.abilityScoreIncreases;
+  if (Array.isArray(asi?.levels) && asi.levels.includes(playerLevel)) {
+    return { type: 'asi', maxScore: asi.maxScore };
+  }
+  const skill = advancement.skills;
+  if (Array.isArray(skill?.levels) && skill.levels.includes(playerLevel)) {
+    const categories =
+      Array.isArray(skill.choices) && skill.choices.length
+        ? skill.choices
+        : DEFAULT_SKILL_CHOICES;
+    return { type: 'choice', categories };
+  }
+  const featOrAttack = advancement.featsOrAttacks;
+  if (Array.isArray(featOrAttack?.levels) && featOrAttack.levels.includes(playerLevel)) {
+    const categories =
+      Array.isArray(featOrAttack.choices) && featOrAttack.choices.length
+        ? featOrAttack.choices
+        : DEFAULT_FEAT_ATTACK_CHOICES;
+    return { type: 'choice', categories };
+  }
+  return null;
+}
+
 export function getAdvancementType(companionType, playerLevel) {
-  if (playerLevel < companionType.advancement.startsAtLevel) return null;
-  return playerLevel % 2 === 0 ? 'asi' : 'choice';
+  const definition = getAdvancementDefinition(companionType, playerLevel);
+  return definition ? definition.type : null;
 }
 
 export function canAdvance(companion, companionType, playerLevel) {
@@ -28,19 +74,19 @@ export function canAdvance(companion, companionType, playerLevel) {
 }
 
 export function getAdvancementContext(companion, companionType, playerLevel) {
-  const type = getAdvancementType(companionType, playerLevel);
-  if (!type) {
+  const definition = getAdvancementDefinition(companionType, playerLevel);
+  if (!definition) {
     return {
       type: null,
       canAdvance: false,
-      blockedReason: 'No advancement available yet.'
+      blockedReason: 'No advancement available at this level.'
     };
   }
 
   const canApply = canAdvance(companion, companionType, playerLevel);
-  if (type === 'asi') {
+  if (definition.type === 'asi') {
     const abilityScores = getAbilityScores(companion, companionType);
-    const maxScore = companionType.advancement.even.maxScore;
+    const maxScore = Number.isFinite(definition.maxScore) ? definition.maxScore : 20;
     const abilityOptions = Object.entries(abilityScores).map(([ability, data]) => ({
       ability,
       label: ability.toUpperCase(),
@@ -51,7 +97,7 @@ export function getAdvancementContext(companion, companionType, playerLevel) {
 
     const hasOption = abilityOptions.some((option) => option.canIncrease);
     return {
-      type,
+      type: 'asi',
       canAdvance: canApply && hasOption,
       blockedReason: !canApply
         ? 'Advancement already applied for this level.'
@@ -68,20 +114,20 @@ export function getAdvancementContext(companion, companionType, playerLevel) {
   const knownSpecialSkills = getKnownSpecialSkills(companion, companionType);
   const choices = {};
 
-  for (const category of companionType.advancement.odd.choices) {
-    const list = companionType.lists[category] || [];
+  for (const category of definition.categories || []) {
+    const list = normalizeFeatureEntries(companionType.lists?.[category] || []);
     const known =
       category === 'feats'
         ? knownFeats
         : category === 'attacks'
         ? knownAttacks
         : knownSpecialSkills;
-    choices[category] = list.filter((option) => !known.includes(option));
+    choices[category] = list.filter((option) => !known.includes(option.name));
   }
 
   const hasOptions = Object.values(choices).some((list) => list.length > 0);
   return {
-    type,
+    type: 'choice',
     canAdvance: canApply && hasOptions,
     blockedReason: !canApply
       ? 'Advancement already applied for this level.'
@@ -119,7 +165,8 @@ export function applyAdvancement(companion, companionType, playerLevel, action) 
   }
   const category = ACTION_TO_CATEGORY[action.type];
   const available = context.choices?.[category] || [];
-  if (!available.includes(action.value)) {
+  const availableNames = available.map((entry) => entry.name);
+  if (!availableNames.includes(action.value)) {
     return { ok: false, error: 'Advancement choice not available.' };
   }
   return { ok: true, entry: action };
@@ -127,4 +174,23 @@ export function applyAdvancement(companion, companionType, playerLevel, action) 
 
 export function categoryToActionType(category) {
   return CATEGORY_TO_ACTION[category] || null;
+}
+
+export function getAdvancementLevels(companionType) {
+  const levels = new Set();
+  const advancement = companionType.advancement || {};
+  const buckets = [
+    advancement.abilityScoreIncreases,
+    advancement.skills,
+    advancement.featsOrAttacks
+  ];
+  for (const bucket of buckets) {
+    if (!Array.isArray(bucket?.levels)) continue;
+    for (const level of bucket.levels) {
+      if (Number.isFinite(level)) {
+        levels.add(level);
+      }
+    }
+  }
+  return Array.from(levels).sort((a, b) => a - b);
 }
