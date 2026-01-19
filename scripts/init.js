@@ -322,6 +322,7 @@ function openCompanionAdvancementFlow(companion, companionType, playerLevel) {
     }
     openAdvancementModal({
       companionName: companion.name,
+      companionTypeId: companionType.id,
       advancement: context,
       onConfirm: (action) => {
         const result = applyAdvancement(companion, companionType, level, action);
@@ -411,6 +412,7 @@ function setupCompanionControls() {
       if (!context.type || !context.canAdvance) return;
       openAdvancementModal({
         companionName: activeCompanion.name,
+        companionTypeId: companionType.id,
         advancement: context,
         onConfirm: (action) => applyAdvancementAction(activeCompanion, companionType, action),
         onCancel: () => render()

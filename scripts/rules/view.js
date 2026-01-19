@@ -48,6 +48,7 @@ export function buildCompanionView(state, companion, companionType) {
     playerLevel,
     proficiencyBonus: pb,
     companionName: companion.name,
+    companionTypeId: companionType.id,
     feats,
     attacks,
     specialSkills,

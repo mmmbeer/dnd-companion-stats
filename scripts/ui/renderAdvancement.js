@@ -25,6 +25,7 @@ export function renderAdvancement(view, onApply) {
   btn.onclick = () => {
     openAdvancementModal({
       companionName: view.companionName,
+      companionTypeId: view.companionTypeId,
       advancement,
       onConfirm: onApply
     });

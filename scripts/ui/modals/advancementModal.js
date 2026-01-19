@@ -1,5 +1,11 @@
 import { openModal } from './modal.js';
 import { categoryToActionType } from '../../rules/advancement.js';
+import {
+  ACTION_DETAILS,
+  ACTION_DETAILS_BY_TYPE,
+  FEAT_DETAILS,
+  SPECIAL_SKILL_DETAILS
+} from '../../data/featureDetails.js';
 
 const CATEGORY_LABELS = {
   feats: 'Feats',
@@ -7,10 +13,20 @@ const CATEGORY_LABELS = {
   specialSkills: 'Skills'
 };
 
-export function openAdvancementModal({ companionName, advancement, onConfirm, onCancel }) {
+export function openAdvancementModal({
+  companionName,
+  companionTypeId,
+  advancement,
+  onConfirm,
+  onCancel
+}) {
   let selectedAbility = null;
   let selectedCategory = null;
   let selectedChoice = null;
+  const actionDetails = {
+    ...ACTION_DETAILS,
+    ...(ACTION_DETAILS_BY_TYPE[companionTypeId] || {})
+  };
 
   const body = document.createElement('div');
   const modal = openModal({
@@ -93,13 +109,34 @@ export function openAdvancementModal({ companionName, advancement, onConfirm, on
 
     const list = advancement.choices[selectedCategory] || [];
     const options = document.createElement('div');
-    options.className = 'option-grid';
+    options.className = 'option-list';
+
+    const detailLookup = {
+      feats: FEAT_DETAILS,
+      attacks: actionDetails,
+      specialSkills: SPECIAL_SKILL_DETAILS
+    };
 
     for (const option of list) {
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = 'option-button';
-      button.textContent = option;
+      button.className = 'option-card';
+      const details = detailLookup[selectedCategory]?.[option] || null;
+      const name = details?.name || option;
+
+      const title = document.createElement('h4');
+      title.textContent = name;
+      button.appendChild(title);
+
+      const descriptions = Array.isArray(details?.description) && details.description.length
+        ? details.description
+        : ['Details unavailable.'];
+      for (const line of descriptions) {
+        const entry = document.createElement('p');
+        entry.textContent = line;
+        button.appendChild(entry);
+      }
+
       if (selectedChoice === option) {
         button.classList.add('is-selected');
       }
