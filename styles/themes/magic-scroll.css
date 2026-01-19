@@ -1,0 +1,13 @@
+:root[data-theme='magic-scroll'] {
+  --bg: #f6efe4;
+  --surface: #fffaf1;
+  --surface-muted: #eadfcd;
+  --border: #7a5e3b;
+  --text-primary: #2f2417;
+  --text-muted: #6b5a45;
+  --accent: #c86f2b;
+  --accent-soft: #edd6b8;
+  --danger: #b24c3a;
+  --success: #3f8462;
+  --overlay: rgba(28, 21, 14, 0.5);
+}

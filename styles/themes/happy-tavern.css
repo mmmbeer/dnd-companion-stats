@@ -1,0 +1,13 @@
+:root[data-theme='happy-tavern'] {
+  --bg: #241910;
+  --surface: #2e2016;
+  --surface-muted: #3a271b;
+  --border: #9b6d36;
+  --text-primary: #f6e3cc;
+  --text-muted: #c6ae93;
+  --accent: #e07b39;
+  --accent-soft: #4a3525;
+  --danger: #c2543d;
+  --success: #4d9a6b;
+  --overlay: rgba(16, 11, 8, 0.82);
+}

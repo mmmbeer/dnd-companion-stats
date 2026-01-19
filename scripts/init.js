@@ -32,7 +32,12 @@ const THEMES = [
   { id: 'feywild-verdancy', label: 'Feywild Verdancy' },
   { id: 'astral-ember', label: 'Astral Ember' },
   { id: 'void-sapphire', label: 'Void Sapphire' },
-  { id: 'relic-stone', label: 'Relic Stone' }
+  { id: 'relic-stone', label: 'Relic Stone' },
+  { id: 'rainbow-unicorn', label: 'Rainbow Unicorn' },
+  { id: 'happy-tavern', label: 'Happy Tavern' },
+  { id: 'magic-scroll', label: 'Magic Scroll' },
+  { id: 'realmic-portal', label: 'Realmic Portal' },
+  { id: 'frost-fields', label: 'Frost Fields' }
 ];
 const AVAILABLE_THEMES = new Set(THEMES.map((theme) => theme.id));
 

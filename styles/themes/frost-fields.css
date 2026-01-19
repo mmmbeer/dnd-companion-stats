@@ -1,0 +1,13 @@
+:root[data-theme='frost-fields'] {
+  --bg: #eaf4fb;
+  --surface: #f6fbff;
+  --surface-muted: #dfeaf3;
+  --border: #4a6b82;
+  --text-primary: #1c2e3a;
+  --text-muted: #5c7282;
+  --accent: #5fb4e6;
+  --accent-soft: #cde6f6;
+  --danger: #b85a5a;
+  --success: #3c8f8a;
+  --overlay: rgba(14, 22, 28, 0.45);
+}

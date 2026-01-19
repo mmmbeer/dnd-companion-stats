@@ -1,0 +1,13 @@
+:root[data-theme='realmic-portal'] {
+  --bg: #0b141a;
+  --surface: #111e27;
+  --surface-muted: #172a36;
+  --border: #355a6d;
+  --text-primary: #e5f7ff;
+  --text-muted: #a2c0cf;
+  --accent: #6b86ff;
+  --accent-soft: #20314e;
+  --danger: #c1565e;
+  --success: #45a07a;
+  --overlay: rgba(6, 10, 14, 0.82);
+}

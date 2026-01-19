@@ -1,0 +1,13 @@
+:root[data-theme='rainbow-unicorn'] {
+  --bg: #f5efff;
+  --surface: #fff6ff;
+  --surface-muted: #eadbff;
+  --border: #8b6ccf;
+  --text-primary: #2a183d;
+  --text-muted: #5c4a73;
+  --accent: #ff6ec7;
+  --accent-soft: #f1d8ff;
+  --danger: #d05a5a;
+  --success: #3c9b78;
+  --overlay: rgba(42, 24, 61, 0.55);
+}
