@@ -63,6 +63,7 @@
 
 .sheet-main {
   display: grid;
+  align-content: start;
   gap: var(--sheet-gap);
 }
 
