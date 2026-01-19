@@ -166,6 +166,27 @@ function populateCompanionTypeOptions() {
   }
 }
 
+function hasLeveledChanges(companion) {
+  if (!companion) return false;
+  const history = companion.advancementHistory;
+  if (history && Object.keys(history).length > 0) return true;
+  const overrides = companion.overrides;
+  if (!overrides || typeof overrides !== 'object') return false;
+  const abilityIncreases = overrides.abilityIncreases || {};
+  if (Object.values(abilityIncreases).some((value) => Number(value) > 0)) {
+    return true;
+  }
+  const overrideLists = ['feats', 'attacks', 'specialSkills'];
+  return overrideLists.some(
+    (key) => Array.isArray(overrides[key]) && overrides[key].length > 0
+  );
+}
+
+function resetLeveledChanges(companion) {
+  companion.advancementHistory = {};
+  companion.overrides = {};
+}
+
 function pruneCompanionAdvancementHistory(companion, level) {
   if (!companion.advancementHistory) return;
   for (const entryLevel of Object.keys(companion.advancementHistory)) {
@@ -424,8 +445,28 @@ function setupCompanionControls() {
     companionTypeSelect.onchange = (event) => {
       const activeCompanion = getActiveCompanion(state);
       if (!activeCompanion) return;
-      activeCompanion.type = event.target.value;
-      render();
+      const nextTypeId = event.target.value;
+      if (nextTypeId === activeCompanion.type) return;
+      if (!hasLeveledChanges(activeCompanion)) {
+        activeCompanion.type = nextTypeId;
+        render();
+        return;
+      }
+      companionTypeSelect.value = activeCompanion.type;
+      openConfirmModal({
+        title: 'Change Companion Type',
+        message: `${activeCompanion.name} has leveled features or changes. Switching types will reset their advancements back to base stats, attacks, features, and skills. Continue?`,
+        confirmLabel: 'Change Type',
+        cancelLabel: 'Cancel',
+        onConfirm: () => {
+          activeCompanion.type = nextTypeId;
+          resetLeveledChanges(activeCompanion);
+          if (companionTypeSelect) {
+            companionTypeSelect.value = nextTypeId;
+          }
+          render();
+        }
+      });
     };
   }
 
