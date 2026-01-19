@@ -28,7 +28,7 @@ export function renderSkills(view) {
       const icon = document.createElement('span');
       icon.className = 'icon icon-expert';
       icon.setAttribute('aria-hidden', 'true');
-      tag.append('(', icon, ')');
+      tag.append(icon);
       tags.appendChild(tag);
     } else if (skill.proficient) {
       const tag = document.createElement('span');
@@ -38,7 +38,7 @@ export function renderSkills(view) {
       const icon = document.createElement('span');
       icon.className = 'icon icon-proficient';
       icon.setAttribute('aria-hidden', 'true');
-      tag.append('(', icon, ')');
+      tag.append(icon);
       tags.appendChild(tag);
     }
 
