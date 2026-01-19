@@ -1,5 +1,6 @@
 import { openModal } from './modal.js';
 import { categoryToActionType } from '../../rules/advancement.js';
+import { abilityMod } from '../../rules/abilities.js';
 import {
   ACTION_DETAILS,
   ACTION_DETAILS_BY_TYPE,
@@ -17,7 +18,10 @@ export function openAdvancementModal({
   companionName,
   companionTypeId,
   advancement,
+  advancementLevel,
+  hasNext,
   onConfirm,
+  onConfirmNext,
   onCancel
 }) {
   let selectedAbility = null;
@@ -30,11 +34,34 @@ export function openAdvancementModal({
 
   const body = document.createElement('div');
   const modal = openModal({
-    title: `Advance ${companionName}`,
+    title: advancementLevel
+      ? `Advance ${companionName} (Level ${advancementLevel})`
+      : `Advance ${companionName}`,
     body,
     className: 'modal-advancement',
-    confirmLabel: 'Confirm Advancement',
+    confirmLabel: 'Add and close',
     cancelLabel: 'Cancel',
+    extraActions: hasNext
+      ? [
+          {
+            label: 'Add and next',
+            className: 'button-secondary',
+            disabled: true,
+            onClick: () => {
+              if (advancement.type === 'asi' && selectedAbility) {
+                onConfirmNext?.({ type: 'asi', ability: selectedAbility });
+                return;
+              }
+              if (advancement.type === 'choice' && selectedCategory && selectedChoice) {
+                const actionType = categoryToActionType(selectedCategory);
+                onConfirmNext?.({ type: actionType, value: selectedChoice });
+                return;
+              }
+              return false;
+            }
+          }
+        ]
+      : [],
     onConfirm: () => {
       if (advancement.type === 'asi' && selectedAbility) {
         onConfirm({ type: 'asi', ability: selectedAbility });
@@ -52,7 +79,9 @@ export function openAdvancementModal({
   function renderAsi() {
     body.innerHTML = '';
     const hint = document.createElement('p');
-    hint.textContent = 'Select one ability to increase by +1.';
+    hint.textContent = advancementLevel
+      ? `Apply the level ${advancementLevel} ability increase.`
+      : 'Select one ability to increase by +1.';
     body.appendChild(hint);
 
     const grid = document.createElement('div');
@@ -70,18 +99,37 @@ export function openAdvancementModal({
       button.addEventListener('click', () => {
         selectedAbility = option.ability;
         modal.setConfirmEnabled(true);
+        if (hasNext) {
+          modal.setExtraEnabled(0, true);
+        }
         renderAsi();
       });
       grid.appendChild(button);
     }
 
     body.appendChild(grid);
+
+    if (selectedAbility) {
+      const selected = advancement.abilityOptions.find(
+        (option) => option.ability === selectedAbility
+      );
+      if (selected) {
+        const preview = document.createElement('p');
+        const nextScore = selected.score + 1;
+        const nextMod = abilityMod(nextScore);
+        const sign = nextMod >= 0 ? '+' : '';
+        preview.textContent = `New score: ${nextScore} (modifier ${sign}${nextMod})`;
+        body.appendChild(preview);
+      }
+    }
   }
 
   function renderChoice() {
     body.innerHTML = '';
     const hint = document.createElement('p');
-    hint.textContent = 'Choose a category, then select a specific option.';
+    hint.textContent = advancementLevel
+      ? `Choose the advancement for level ${advancementLevel}.`
+      : 'Choose a category, then select a specific option.';
     body.appendChild(hint);
 
     const categoryRow = document.createElement('div');
@@ -99,6 +147,9 @@ export function openAdvancementModal({
         selectedCategory = category;
         selectedChoice = null;
         modal.setConfirmEnabled(false);
+        if (hasNext) {
+          modal.setExtraEnabled(0, false);
+        }
         renderChoice();
       });
       categoryRow.appendChild(button);
@@ -144,6 +195,9 @@ export function openAdvancementModal({
       button.addEventListener('click', () => {
         selectedChoice = option;
         modal.setConfirmEnabled(true);
+        if (hasNext) {
+          modal.setExtraEnabled(0, true);
+        }
         renderChoice();
       });
       options.appendChild(button);

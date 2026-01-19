@@ -55,7 +55,7 @@ function render() {
   if (!companion) {
     setCompanionViewVisibility(false);
     updateTopbarTitle();
-    updateLevelUpButton();
+    updateLevelUpButton(false);
     renderEmptyState(openAddCompanionFlow);
     saveState(state, { validateState });
     return;
@@ -88,7 +88,12 @@ function render() {
     onReplaceAdvancement: (level) =>
       requestAdvancementReplacement(companion, companionType, level)
   });
-  updateLevelUpButton(view.advancement);
+  const pendingLevels = getPendingAdvancementLevels(
+    companion,
+    companionType,
+    companion.playerLevel
+  ) || [];
+  updateLevelUpButton(pendingLevels.length > 0);
   saveState(state, { validateState });
 }
 
@@ -261,6 +266,8 @@ function requestAdvancementReplacement(companion, companionType, level) {
   openAdvancementModal({
     companionName: companion.name,
     companionTypeId: companionType.id,
+    advancementLevel: level,
+    hasNext: false,
     advancement: context,
     onConfirm: (action) => {
       const result = applyAdvancement(tempCompanion, companionType, level, action);
@@ -329,9 +336,9 @@ function setCompanionViewVisibility(hasCompanion) {
   if (sheetBody) sheetBody.classList.toggle('is-hidden', !hasCompanion);
 }
 
-function updateLevelUpButton(advancement) {
+function updateLevelUpButton(hasPending) {
   if (!levelUpButton) return;
-  const isReady = Boolean(advancement?.type && advancement?.canAdvance);
+  const isReady = Boolean(hasPending);
   levelUpButton.classList.toggle('is-hidden', !isReady);
   levelUpButton.classList.toggle('is-glowing', isReady);
 }
@@ -411,12 +418,24 @@ function requestCompanionLevelChange(companion, nextLevel, onApplied) {
   }
 }
 
-function openCompanionAdvancementFlow(companion, companionType, playerLevel) {
+function getPendingAdvancementLevels(companion, companionType, playerLevel) {
   const startLevel = companionType.advancement.startsAtLevel;
   if (playerLevel < startLevel) return;
   const levels = [];
   for (let level = startLevel; level <= playerLevel; level += 1) {
-    levels.push(level);
+    const context = getAdvancementContext(companion, companionType, level);
+    if (context.type && context.canAdvance) {
+      levels.push(level);
+    }
+  }
+  return levels;
+}
+
+function openCompanionAdvancementFlow(companion, companionType, playerLevel) {
+  const levels = getPendingAdvancementLevels(companion, companionType, playerLevel) || [];
+  if (!levels.length) {
+    render();
+    return;
   }
 
   const advanceAtIndex = (index) => {
@@ -433,8 +452,19 @@ function openCompanionAdvancementFlow(companion, companionType, playerLevel) {
     openAdvancementModal({
       companionName: companion.name,
       companionTypeId: companionType.id,
+      advancementLevel: level,
+      hasNext: index < levels.length - 1,
       advancement: context,
       onConfirm: (action) => {
+        const result = applyAdvancement(companion, companionType, level, action);
+        if (!result.ok) {
+          console.error(result.error);
+          return;
+        }
+        companion.advancementHistory[level] = result.entry;
+        render();
+      },
+      onConfirmNext: (action) => {
         const result = applyAdvancement(companion, companionType, level, action);
         if (!result.ok) {
           console.error(result.error);
@@ -550,19 +580,11 @@ function setupCompanionControls() {
       if (!activeCompanion) return;
       const companionType = getCompanionType(activeCompanion.type);
       if (!companionType) return;
-      const context = getAdvancementContext(
+      openCompanionAdvancementFlow(
         activeCompanion,
         companionType,
         activeCompanion.playerLevel
       );
-      if (!context.type || !context.canAdvance) return;
-      openAdvancementModal({
-        companionName: activeCompanion.name,
-        companionTypeId: companionType.id,
-        advancement: context,
-        onConfirm: (action) => applyAdvancementAction(activeCompanion, companionType, action),
-        onCancel: () => render()
-      });
     };
   }
 

@@ -15,7 +15,8 @@ export function openModal({
   cancelLabel = 'Cancel',
   onConfirm,
   onCancel,
-  className
+  className,
+  extraActions = []
 }) {
   const root = ensureModalRoot();
   const overlay = document.createElement('div');
@@ -54,7 +55,23 @@ export function openModal({
   confirmBtn.className = 'button-primary';
   confirmBtn.textContent = confirmLabel;
 
-  footer.append(cancelBtn, confirmBtn);
+  const actionButtons = Array.isArray(extraActions) ? extraActions : [];
+  const extraButtons = actionButtons.map((action) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = action.className || 'button-secondary';
+    button.textContent = action.label || 'Action';
+    button.disabled = Boolean(action.disabled);
+    button.addEventListener('click', () => {
+      if (button.disabled) return;
+      const result = action.onClick?.();
+      if (result === false) return;
+      close();
+    });
+    return button;
+  });
+
+  footer.append(cancelBtn, ...extraButtons, confirmBtn);
   modal.append(header, bodyEl, footer);
   overlay.appendChild(modal);
   root.appendChild(overlay);
@@ -96,6 +113,11 @@ export function openModal({
   return {
     setConfirmEnabled(enabled) {
       confirmBtn.disabled = !enabled;
+    },
+    setExtraEnabled(index, enabled) {
+      const button = extraButtons[index];
+      if (!button) return;
+      button.disabled = !enabled;
     },
     setBody(newBody) {
       bodyEl.innerHTML = '';
