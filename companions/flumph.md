@@ -88,7 +88,7 @@ While the flumph is within 10 feet of its master, neither can be charmed or frig
 
 ### Psionic Recoil
 
-When the flumph succeeds on a saving throw against a spell or magical effect, the caster takes psychic damage equal to the flumph’s proficiency bonus.
+When the flumph is required to make a saving roll against a spell or magical effect, the caster takes psychic damage equal to twice the flumph’s proficiency bonus.
 
 
 \page

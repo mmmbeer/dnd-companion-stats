@@ -48,10 +48,6 @@ export function validateState(state) {
     addError(errors, 'state.theme must be a string.');
   }
 
-  if (!isPlainObject(state.player) || !Number.isFinite(state.player.level)) {
-    addError(errors, 'state.player.level must be a number.');
-  }
-
   if (!isPlainObject(state.companions)) {
     addError(errors, 'state.companions must be an object.');
   } else {
@@ -61,6 +57,9 @@ export function validateState(state) {
         for (const error of instanceResult.errors) {
           addError(errors, `companions.${companionId}: ${error}`);
         }
+      }
+      if (!Number.isFinite(companion?.playerLevel)) {
+        addError(errors, `companions.${companionId}.playerLevel must be a number.`);
       }
       if (companion?.advancementHistory) {
         validateAdvancementHistory(

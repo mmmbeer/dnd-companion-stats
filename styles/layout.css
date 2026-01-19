@@ -6,9 +6,8 @@
 
 .topbar {
   display: flex;
-  flex-wrap: no-wrap;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: var(--space-4);
   padding: var(--space-5);
   background: var(--surface);
@@ -23,11 +22,22 @@
   margin-bottom: var(--space-1);
 }
 
-.topbar-controls {
+.topbar-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: var(--space-3);
   align-items: center;
+}
+
+.topbar-row-controls {
+  flex-wrap: wrap;
+}
+
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .abilities-panel {
@@ -72,11 +82,12 @@
 }
 
 @media (max-width: 640px) {
-  .topbar {
-    align-items: flex-start;
+  .topbar-row {
+    flex-wrap: wrap;
   }
 
-  .topbar-controls {
+  .topbar-right {
+    margin-left: 0;
     width: 100%;
     justify-content: flex-start;
   }

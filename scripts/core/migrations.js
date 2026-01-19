@@ -105,6 +105,23 @@ function migrateV2ToV3(stateV2) {
   };
 }
 
+function migrateV3ToV4(stateV3) {
+  const level = Number(stateV3.player?.level) || 1;
+  const companions = {};
+  for (const [id, companion] of Object.entries(stateV3.companions || {})) {
+    companions[id] = {
+      ...companion,
+      playerLevel: Number(companion.playerLevel) || level
+    };
+  }
+  return {
+    version: 4,
+    theme: normalizeTheme(stateV3.theme),
+    companions,
+    activeCompanionId: stateV3.activeCompanionId ?? null
+  };
+}
+
 export function migrateState(state, options = {}) {
   if (!state || typeof state !== 'object') return null;
   const version = Number(state.version) || 1;
@@ -116,9 +133,14 @@ export function migrateState(state, options = {}) {
       options.defaultCompanionTypeId
     );
     if (!v2) return null;
-    return migrateV2ToV3(v2);
+    const v3 = migrateV2ToV3(v2);
+    return migrateV3ToV4(v3);
   }
-  if (version === 2) return migrateV2ToV3(state);
+  if (version === 2) {
+    const v3 = migrateV2ToV3(state);
+    return migrateV3ToV4(v3);
+  }
+  if (version === 3) return migrateV3ToV4(state);
   console.error('Unsupported state version:', version);
   return null;
 }

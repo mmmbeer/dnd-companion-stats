@@ -20,7 +20,7 @@ import {
 } from '../data/featureDetails.js';
 
 export function buildCompanionView(state, companion, companionType) {
-  const playerLevel = state.player.level;
+  const playerLevel = Number(companion.playerLevel) || 1;
   const pb = proficiencyBonus(playerLevel);
   const abilityScores = getAbilityScores(companion, companionType);
   const abilityView = buildAbilityView(abilityScores);

@@ -5,7 +5,7 @@ export function renderHealth(view, onChange) {
 
   root.innerHTML = `
     <div class="panel-header">
-      <h2>Health Points (HP)</h2>
+      <h2>Health (HP)</h2>
     </div>
   `;
 

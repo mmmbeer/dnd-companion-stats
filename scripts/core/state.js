@@ -1,11 +1,12 @@
-export const STATE_VERSION = 3;
+export const STATE_VERSION = 4;
 export const DEFAULT_COMPANION_ID = 'companion-1';
 
-export function createCompanionInstance(id, typeId, name) {
+export function createCompanionInstance(id, typeId, name, playerLevel = 1) {
   return {
     id,
     type: typeId,
     name,
+    playerLevel,
     advancementHistory: {},
     overrides: {}
   };
@@ -29,9 +30,6 @@ export function createDefaultState(defaultTypeId, defaultCompanionName) {
   return {
     version: STATE_VERSION,
     theme: 'arcane-midnight',
-    player: {
-      level: 1
-    },
     companions: {},
     activeCompanionId: null
   };

@@ -15,6 +15,7 @@ import { renderStats } from './ui/renderStats.js';
 import { renderSkills } from './ui/renderSkills.js';
 import { renderFeatures } from './ui/renderFeatures.js';
 import { openConfirmModal } from './ui/modals/confirmModal.js';
+import { openThemeModal } from './ui/modals/themeModal.js';
 import { renderHealth } from './ui/renderHealth.js';
 import { renderSavingThrows } from './ui/renderSavingThrows.js';
 import { renderEmptyState } from './ui/renderEmptyState.js';
@@ -22,13 +23,14 @@ import { openAddCompanionModal } from './ui/modals/addCompanionModal.js';
 import { openAdvancementModal } from './ui/modals/advancementModal.js';
 import { getRandomCompanionName } from './data/nameRandomizer.js';
 
-const AVAILABLE_THEMES = new Set([
-  'arcane-midnight',
-  'feywild-verdancy',
-  'astral-ember',
-  'void-sapphire',
-  'relic-stone'
-]);
+const THEMES = [
+  { id: 'arcane-midnight', label: 'Arcane Midnight' },
+  { id: 'feywild-verdancy', label: 'Feywild Verdancy' },
+  { id: 'astral-ember', label: 'Astral Ember' },
+  { id: 'void-sapphire', label: 'Void Sapphire' },
+  { id: 'relic-stone', label: 'Relic Stone' }
+];
+const AVAILABLE_THEMES = new Set(THEMES.map((theme) => theme.id));
 
 let state = null;
 let defaultCompanionTypeId = null;
@@ -43,7 +45,8 @@ let emptyStatePanel = null;
 let abilitiesPanel = null;
 let sheetBody = null;
 let topbarTitle = null;
-let topbarSubtitle = null;
+let companionTypeSelect = null;
+let settingsButton = null;
 
 function render() {
   const companion = getActiveCompanion(state);
@@ -63,7 +66,8 @@ function render() {
     console.error('Unknown companion type:', companion.type);
     return;
   }
-  updateTopbarTitle(companion, companionType);
+  ensureCompanionLevel(companion);
+  updateTopbarTitle(companion);
   setCompanionViewVisibility(true);
   ensureCompanionHealth(companion, companionType);
   const view = buildCompanionView(state, companion, companionType);
@@ -87,14 +91,14 @@ function applyAdvancementAction(companion, companionType, action) {
   const result = applyAdvancement(
     companion,
     companionType,
-    state.player.level,
+    companion.playerLevel,
     action
   );
   if (!result.ok) {
     console.error(result.error);
     return;
   }
-  companion.advancementHistory[state.player.level] = result.entry;
+  companion.advancementHistory[companion.playerLevel] = result.entry;
   render();
 }
 
@@ -103,6 +107,12 @@ function ensureTheme() {
     state.theme = 'arcane-midnight';
   }
   document.documentElement.dataset.theme = state.theme;
+}
+
+function ensureCompanionLevel(companion) {
+  if (!Number.isFinite(companion.playerLevel)) {
+    companion.playerLevel = 1;
+  }
 }
 
 function ensureCompanionHealth(companion, companionType) {
@@ -143,38 +153,47 @@ function getNumberedCompanionName(typeId, index) {
   return `${getBaseCompanionName(typeId)} ${index}`;
 }
 
-function pruneAdvancementHistory(level) {
-  for (const companion of Object.values(state.companions)) {
-    if (!companion.advancementHistory) continue;
-    for (const entryLevel of Object.keys(companion.advancementHistory)) {
-      const numericLevel = Number(entryLevel);
-      if (Number.isFinite(numericLevel) && numericLevel >= level) {
-        delete companion.advancementHistory[entryLevel];
-      }
+function populateCompanionTypeOptions() {
+  if (!companionTypeSelect) return;
+  const types = listCompanionTypes();
+  companionTypeSelect.innerHTML = '';
+  const sorted = [...types].sort((a, b) => a.name.localeCompare(b.name));
+  for (const type of sorted) {
+    const option = document.createElement('option');
+    option.value = type.id;
+    option.textContent = type.name;
+    companionTypeSelect.appendChild(option);
+  }
+}
+
+function pruneCompanionAdvancementHistory(companion, level) {
+  if (!companion.advancementHistory) return;
+  for (const entryLevel of Object.keys(companion.advancementHistory)) {
+    const numericLevel = Number(entryLevel);
+    if (Number.isFinite(numericLevel) && numericLevel >= level) {
+      delete companion.advancementHistory[entryLevel];
     }
   }
 }
 
-function countAdvancementEntriesAtOrAbove(level) {
+function countAdvancementEntriesAtOrAbove(companion, level) {
   let count = 0;
-  for (const companion of Object.values(state.companions)) {
-    if (!companion.advancementHistory) continue;
-    for (const entryLevel of Object.keys(companion.advancementHistory)) {
-      const numericLevel = Number(entryLevel);
-      if (Number.isFinite(numericLevel) && numericLevel >= level) {
-        count += 1;
-      }
+  if (!companion.advancementHistory) return count;
+  for (const entryLevel of Object.keys(companion.advancementHistory)) {
+    const numericLevel = Number(entryLevel);
+    if (Number.isFinite(numericLevel) && numericLevel >= level) {
+      count += 1;
     }
   }
   return count;
 }
 
-function applyPlayerLevelChange(nextLevel) {
-  state.player.level = nextLevel;
-  pruneAdvancementHistory(nextLevel);
+function applyCompanionLevelChange(companion, nextLevel) {
+  companion.playerLevel = nextLevel;
+  pruneCompanionAdvancementHistory(companion, nextLevel);
   render();
   if (playerLevelInput) {
-    playerLevelInput.value = state.player.level;
+    playerLevelInput.value = String(companion.playerLevel);
   }
 }
 
@@ -194,6 +213,9 @@ function renderCompanionRoster() {
   const hasCompanions = companions.length > 0;
   companionSelect.disabled = !hasCompanions;
   companionNameInput.disabled = !hasCompanions;
+  if (companionTypeSelect) {
+    companionTypeSelect.disabled = !hasCompanions;
+  }
   if (randomizeNameButton) {
     randomizeNameButton.disabled = !hasCompanions;
   }
@@ -209,8 +231,17 @@ function renderCompanionRoster() {
     companionSelect.value = state.activeCompanionId;
     const activeCompanion = getActiveCompanion(state);
     companionNameInput.value = activeCompanion?.name || '';
+    if (companionTypeSelect && activeCompanion) {
+      companionTypeSelect.value = activeCompanion.type;
+    }
+    if (playerLevelInput && activeCompanion) {
+      playerLevelInput.value = String(activeCompanion.playerLevel ?? 1);
+    }
   } else {
     companionNameInput.value = '';
+    if (playerLevelInput) {
+      playerLevelInput.value = '';
+    }
   }
 }
 
@@ -227,17 +258,13 @@ function updateLevelUpButton(advancement) {
   levelUpButton.classList.toggle('is-glowing', isReady);
 }
 
-function updateTopbarTitle(companion, companionType) {
-  if (!topbarTitle || !topbarSubtitle) return;
-  if (!companion || !companionType) {
+function updateTopbarTitle(companion) {
+  if (!topbarTitle) return;
+  if (!companion) {
     topbarTitle.textContent = 'Companion Sheet';
-    topbarSubtitle.textContent = '';
     return;
   }
-  const levelLabel = `L${state.player.level}`;
-  topbarTitle.textContent = `${companion.name} - ${companionType.name} ${levelLabel} - Companion Sheet`;
-  const subtag = companionType.traits?.[0]?.name ?? '';
-  topbarSubtitle.textContent = subtag;
+  topbarTitle.textContent = companion.name;
 }
 
 function setActiveCompanionName(value) {
@@ -252,10 +279,7 @@ function setActiveCompanionName(value) {
   if (selectedOption) {
     selectedOption.textContent = formatCompanionOption(activeCompanion);
   }
-  const companionType = getCompanionType(activeCompanion.type);
-  if (companionType) {
-    updateTopbarTitle(activeCompanion, companionType);
-  }
+  updateTopbarTitle(activeCompanion);
   saveState(state, { validateState });
 }
 
@@ -265,39 +289,40 @@ function getAddCompanionDefaults(typeId) {
   return getNumberedCompanionName(typeId, index);
 }
 
-function createCompanionFromInput({ typeId, name }) {
+function createCompanionFromInput({ typeId, name, playerLevel }) {
   const nextId = getNextCompanionId(state);
-  const companion = createCompanionInstance(nextId, typeId, name);
+  const companion = createCompanionInstance(nextId, typeId, name, playerLevel);
   state.companions[nextId] = companion;
   state.activeCompanionId = nextId;
   return companion;
 }
 
-function requestPlayerLevelChange(nextLevel, onApplied) {
-  if (nextLevel === state.player.level) {
+function requestCompanionLevelChange(companion, nextLevel, onApplied) {
+  if (!companion) return;
+  if (nextLevel === companion.playerLevel) {
     onApplied?.();
     return;
   }
-  if (nextLevel < state.player.level) {
-    const removedCount = countAdvancementEntriesAtOrAbove(nextLevel);
+  if (nextLevel < companion.playerLevel) {
+    const removedCount = countAdvancementEntriesAtOrAbove(companion, nextLevel);
     if (removedCount > 0) {
       if (playerLevelInput) {
-        playerLevelInput.value = state.player.level;
+        playerLevelInput.value = String(companion.playerLevel);
       }
       openConfirmModal({
         title: 'Lower Player Level',
-        message: `Lowering to level ${nextLevel} will remove ${removedCount} advancement ${removedCount === 1 ? 'entry' : 'entries'} across companions. Continue?`,
+        message: `Lowering to level ${nextLevel} will remove ${removedCount} advancement ${removedCount === 1 ? 'entry' : 'entries'} for ${companion.name}. Continue?`,
         confirmLabel: 'Lower Level',
         cancelLabel: 'Cancel',
         onConfirm: () => {
-          applyPlayerLevelChange(nextLevel);
+          applyCompanionLevelChange(companion, nextLevel);
           onApplied?.();
         }
       });
       return;
     }
   }
-  applyPlayerLevelChange(nextLevel);
+  applyCompanionLevelChange(companion, nextLevel);
   onApplied?.();
 }
 
@@ -350,21 +375,21 @@ function openAddCompanionFlow() {
     return;
   }
   const nameForType = (typeId) => getAddCompanionDefaults(typeId);
+  const activeCompanion = getActiveCompanion(state);
+  const defaultPlayerLevel = activeCompanion?.playerLevel ?? 1;
   openAddCompanionModal({
     types,
     defaultTypeId: defaultCompanionTypeId,
     defaultName: nameForType(defaultCompanionTypeId),
-    defaultPlayerLevel: state.player.level || 1,
+    defaultPlayerLevel,
     nameForType,
     onConfirm: ({ typeId, name, playerLevel }) => {
-      requestPlayerLevelChange(playerLevel, () => {
-        const companion = createCompanionFromInput({ typeId, name });
-        render();
-        const companionType = getCompanionType(typeId);
-        if (companionType) {
-          openCompanionAdvancementFlow(companion, companionType, state.player.level);
-        }
-      });
+      const companion = createCompanionFromInput({ typeId, name, playerLevel });
+      render();
+      const companionType = getCompanionType(typeId);
+      if (companionType) {
+        openCompanionAdvancementFlow(companion, companionType, companion.playerLevel);
+      }
     }
   });
 }
@@ -372,6 +397,7 @@ function openAddCompanionFlow() {
 function setupCompanionControls() {
   companionSelect = document.getElementById('companionSelect');
   companionNameInput = document.getElementById('companionName');
+  companionTypeSelect = document.getElementById('companionTypeSelect');
   randomizeNameButton = document.getElementById('randomizeCompanionName');
   newCompanionButton = document.getElementById('newCompanion');
   deleteCompanionButton = document.getElementById('deleteCompanion');
@@ -381,7 +407,9 @@ function setupCompanionControls() {
   abilitiesPanel = document.getElementById('abilities');
   sheetBody = document.querySelector('.sheet-body');
   topbarTitle = document.getElementById('topbarTitle');
-  topbarSubtitle = document.getElementById('topbarSubtitle');
+  settingsButton = document.getElementById('openSettings');
+
+  populateCompanionTypeOptions();
 
   companionSelect.onchange = (event) => {
     state.activeCompanionId = event.target.value;
@@ -391,6 +419,15 @@ function setupCompanionControls() {
   companionNameInput.oninput = (event) => {
     setActiveCompanionName(event.target.value);
   };
+
+  if (companionTypeSelect) {
+    companionTypeSelect.onchange = (event) => {
+      const activeCompanion = getActiveCompanion(state);
+      if (!activeCompanion) return;
+      activeCompanion.type = event.target.value;
+      render();
+    };
+  }
 
   if (randomizeNameButton) {
     randomizeNameButton.onclick = () => {
@@ -408,7 +445,11 @@ function setupCompanionControls() {
       if (!activeCompanion) return;
       const companionType = getCompanionType(activeCompanion.type);
       if (!companionType) return;
-      const context = getAdvancementContext(activeCompanion, companionType, state.player.level);
+      const context = getAdvancementContext(
+        activeCompanion,
+        companionType,
+        activeCompanion.playerLevel
+      );
       if (!context.type || !context.canAdvance) return;
       openAdvancementModal({
         companionName: activeCompanion.name,
@@ -442,6 +483,20 @@ function setupCompanionControls() {
       }
     });
   };
+
+  if (settingsButton) {
+    settingsButton.onclick = () => {
+      openThemeModal({
+        themes: THEMES,
+        currentTheme: state.theme,
+        onConfirm: (nextTheme) => {
+          state.theme = nextTheme;
+          ensureTheme();
+          saveState(state, { validateState });
+        }
+      });
+    };
+  }
 }
 
 async function init() {
@@ -474,21 +529,14 @@ async function init() {
   ensureActiveCompanion();
   setupCompanionControls();
   if (playerLevelInput) {
-    playerLevelInput.value = state.player.level;
     playerLevelInput.oninput = (event) => {
+      const activeCompanion = getActiveCompanion(state);
+      if (!activeCompanion) return;
       const nextLevel = Number(event.target.value);
       if (!Number.isFinite(nextLevel)) return;
-      requestPlayerLevelChange(nextLevel);
+      requestCompanionLevelChange(activeCompanion, nextLevel);
     };
   }
-
-  const themeSelect = document.getElementById('themeSelect');
-  themeSelect.value = state.theme;
-  themeSelect.onchange = (event) => {
-    state.theme = event.target.value;
-    ensureTheme();
-    saveState(state, { validateState });
-  };
 
   render();
 }

@@ -9,15 +9,29 @@
 <body>
   <div class="page">
     <header class="topbar">
-      <div class="topbar-brand">
-        <h1 id="topbarTitle">Companion Sheet</h1>
-        <p class="topbar-subtitle" id="topbarSubtitle"></p>
+      <div class="topbar-row topbar-row-main">
+        <div class="topbar-brand">
+          <h1 id="topbarTitle">Companion Sheet</h1>
+        </div>
+        <div class="topbar-right">
+          <label class="field field-inline">
+            <span>Companions</span>
+            <select id="companionSelect"></select>
+          </label>
+          <div class="topbar-actions">
+            <button id="newCompanion" type="button" class="button-icon button-icon-only" title="New companion" aria-label="New companion">
+              <span class="icon icon-new" aria-hidden="true"></span>
+            </button>
+            <button id="deleteCompanion" type="button" class="button-secondary button-icon button-icon-only" title="Delete companion" aria-label="Delete companion">
+              <span class="icon icon-trash" aria-hidden="true"></span>
+            </button>
+          </div>
+          <button id="openSettings" type="button" class="button-secondary button-icon button-icon-only" title="Settings" aria-label="Settings">
+            <span class="icon icon-settings" aria-hidden="true"></span>
+          </button>
+        </div>
       </div>
-      <div class="topbar-controls">
-        <label class="field field-inline">
-          <span>Companion</span>
-          <select id="companionSelect"></select>
-        </label>
+      <div class="topbar-row topbar-row-controls">
         <div class="field-row">
           <label class="field field-inline">
             <span>Name</span>
@@ -27,14 +41,10 @@
             <span class="icon icon-random" aria-hidden="true"></span>
           </button>
         </div>
-        <div class="topbar-actions">
-          <button id="newCompanion" type="button" class="button-icon button-icon-only" title="New companion" aria-label="New companion">
-            <span class="icon icon-new" aria-hidden="true"></span>
-          </button>
-          <button id="deleteCompanion" type="button" class="button-secondary button-icon button-icon-only" title="Delete companion" aria-label="Delete companion">
-            <span class="icon icon-trash" aria-hidden="true"></span>
-          </button>
-        </div>
+        <label class="field field-inline">
+          <span>Type</span>
+          <select id="companionTypeSelect"></select>
+        </label>
         <label class="field field-inline player-level-field">
           <span>Player Level</span>
           <div class="field-row player-level-row">
@@ -43,16 +53,6 @@
               <span class="icon icon-level-up" aria-hidden="true"></span>
             </button>
           </div>
-        </label>
-        <label class="field field-inline">
-          <span>Theme</span>
-          <select id="themeSelect">
-            <option value="arcane-midnight">Arcane Midnight</option>
-            <option value="feywild-verdancy">Feywild Verdancy</option>
-            <option value="astral-ember">Astral Ember</option>
-            <option value="void-sapphire">Void Sapphire</option>
-            <option value="relic-stone">Relic Stone</option>
-          </select>
         </label>
       </div>
     </header>
