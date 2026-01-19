@@ -64,8 +64,104 @@ export const ACTION_DETAILS_BY_TYPE = {
       name: 'Venom Mark',
       description: [
         'Melee Weapon Attack: +5 to hit, reach 5 ft., one creature.',
-        'Hit: 1d4 piercing damage.',
+        'Hit: 1d4 + 3 piercing damage.',
         'Until the end of the pseudodragon\'s next turn, the pseudodragon and its master have advantage on the first attack roll made against the target.'
+      ]
+    },
+    'Psychic Needle': {
+      name: 'Psychic Needle',
+      description: [
+        'Melee Weapon Attack: +5 to hit, reach 5 ft., one target.',
+        'Hit: 1d6 + 3 psychic damage.',
+        'The target has disadvantage on the next concentration check it makes before the end of its next turn.'
+      ]
+    }
+  },
+  flumph: {
+    Tentacle: {
+      name: 'Tentacle',
+      description: [
+        'Melee Weapon Attack: +4 to hit, reach 5 ft., one target.',
+        'Hit: 5 (1d6 + 2) bludgeoning damage.'
+      ]
+    },
+    'Stench Spray': {
+      name: 'Stench Spray',
+      description: [
+        'Recharge 5-6.',
+        'Each creature in a 15-foot cone must succeed on a Constitution saving throw or be poisoned until the end of its next turn.'
+      ]
+    },
+    'Psychic Pulse': {
+      name: 'Psychic Pulse',
+      description: [
+        'Ranged Psionic Attack: +4 to hit, range 30 ft., one target.',
+        'Hit: 1d8 psychic damage.',
+        'The target has disadvantage on its next attack roll before the end of its next turn.'
+      ]
+    },
+    'Disorienting Tentacle': {
+      name: 'Disorienting Tentacle',
+      description: [
+        'Melee Weapon Attack: +4 to hit, reach 5 ft., one target.',
+        'Hit: 1d6 + 2 bludgeoning damage.',
+        'The target\'s speed is reduced to 0 until the start of its next turn.'
+      ]
+    },
+    'Mind Ripple': {
+      name: 'Mind Ripple',
+      description: [
+        'Psionic Burst: Each creature of the flumph\'s choice within 10 feet must succeed on a Wisdom saving throw or take 1d6 psychic damage.',
+        'On a failed save, the target has disadvantage on its next saving throw before the end of its next turn.'
+      ]
+    },
+    'Psychic Rebound': {
+      name: 'Psychic Rebound',
+      description: [
+        'Reaction.',
+        'When a creature within 15 feet hits the flumph or its master with an attack, the attacker takes psychic damage equal to the flumph\'s proficiency bonus.',
+        'The attacker has disadvantage on its next attack roll.'
+      ]
+    }
+  },
+  tressym: {
+    Claws: {
+      name: 'Claws',
+      description: [
+        'Melee Weapon Attack: +5 to hit, reach 5 ft., one target.',
+        'Hit: 5 (1d4 + 3) slashing damage.'
+      ]
+    },
+    'Arcane Disrupting Claws': {
+      name: 'Arcane Disrupting Claws',
+      description: [
+        'Melee Weapon Attack: +5 to hit, reach 5 ft., one target.',
+        'Hit: 1d6 + 3 slashing damage.',
+        'If the target is concentrating on a spell, it has disadvantage on the concentration saving throw caused by this damage.'
+      ]
+    },
+    'Wing Slash': {
+      name: 'Wing Slash',
+      description: [
+        'Melee Weapon Attack: +5 to hit, reach 5 ft., one target.',
+        'Hit: 1d4 + 3 slashing damage.',
+        'The target cannot take reactions until the start of its next turn.'
+      ]
+    },
+    'Arcane Pounce': {
+      name: 'Arcane Pounce',
+      description: [
+        'Melee Weapon Attack: +5 to hit, reach 5 ft., one target.',
+        'Hit: 1d8 + 3 slashing damage.',
+        'If the tressym flew at least 20 feet straight toward the target this turn, the target must succeed on a Dexterity saving throw or be knocked prone.'
+      ]
+    },
+    Spellrake: {
+      name: 'Spellrake',
+      description: [
+        'Melee Weapon Attack: +5 to hit, reach 5 ft., one target.',
+        'Hit: 1d4 + 3 slashing damage plus 1d6 force damage.',
+        'Until the start of the tressym\'s next turn, the target has disadvantage on spell attack rolls.'
       ]
     }
   }
@@ -227,6 +323,84 @@ export const FEAT_DETAILS = {
     description: [
       'When the pseudodragon hits a creature with Sting, it may choose to suppress the unconscious effect and instead impose disadvantage on the creature\'s next saving throw before the end of its next turn.'
     ]
+  },
+  'Psychic Dampener': {
+    name: 'Psychic Dampener',
+    description: [
+      'Enemies within 10 feet of the flumph have disadvantage on the first attack roll they make each turn.'
+    ]
+  },
+  'Empathic Shield': {
+    name: 'Empathic Shield',
+    description: [
+      'When an ally within 30 feet takes damage, the flumph can use its reaction to reduce the damage by 1d8 + the flumph\'s proficiency bonus.',
+      'This reaction can be used a number of times equal to the flumph\'s proficiency bonus per long rest.'
+    ]
+  },
+  'Thought Static': {
+    name: 'Thought Static',
+    description: [
+      'Creatures poisoned by the flumph\'s Stench Spray have disadvantage on Wisdom saving throws until the end of their next turn.'
+    ]
+  },
+  'Aberrant Insight': {
+    name: 'Aberrant Insight',
+    description: [
+      'The flumph gains expertise in Insight.',
+      'It also has advantage on Insight checks made to detect hostile intent or emotional manipulation.'
+    ]
+  },
+  'Mind Anchor': {
+    name: 'Mind Anchor',
+    description: [
+      'While the flumph is within 10 feet of its master, neither can be charmed or frightened.'
+    ]
+  },
+  'Psionic Recoil': {
+    name: 'Psionic Recoil',
+    description: [
+      'When the flumph succeeds on a saving throw against a spell or magical effect, the caster takes psychic damage equal to the flumph\'s proficiency bonus.'
+    ]
+  },
+  'Spell Sniffer': {
+    name: 'Spell Sniffer',
+    description: [
+      'The range of Spell Sense increases to 60 feet.',
+      'In addition, the tressym can distinguish illusions from other magical effects.'
+    ]
+  },
+  'Illusion Breaker': {
+    name: 'Illusion Breaker',
+    description: [
+      'When the tressym touches an illusion, the illusion is revealed to all creatures within 10 feet until the end of the tressym\'s next turn.'
+    ]
+  },
+  'Arcane Interference': {
+    name: 'Arcane Interference',
+    description: [
+      'When a creature within 30 feet casts a spell, the tressym can use its reaction to impose disadvantage on one attack roll or saving throw caused by that spell.',
+      'This reaction can be used a number of times equal to the tressym\'s proficiency bonus per long rest.'
+    ]
+  },
+  'Vigilant Perch': {
+    name: 'Vigilant Perch',
+    description: [
+      'While perched on its master, the tressym grants advantage on initiative rolls.',
+      'It also grants advantage on the first saving throw against a spell the master makes each combat.'
+    ]
+  },
+  'Nine Lives': {
+    name: 'Nine Lives',
+    description: [
+      'When the tressym is reduced to 0 hit points but not killed outright, it instead drops to 1 hit point and becomes invisible until the end of its next turn.',
+      'Once this feature is used, it cannot be used again until the tressym finishes a long rest.'
+    ]
+  },
+  'Arcane Tail Lash': {
+    name: 'Arcane Tail Lash',
+    description: [
+      'When a creature within 5 feet of the tressym casts a spell, the tressym can make a Claws attack against that creature as a reaction.'
+    ]
   }
 };
 
@@ -269,17 +443,10 @@ export const SPECIAL_SKILL_DETAILS = {
       'Each spell can be cast once per long rest unless otherwise specified.'
     ]
   },
-  'Silent Glide': {
-    name: 'Silent Glide',
+  'Silent Flight': {
+    name: 'Silent Flight',
     description: [
-      'The pseudodragon\'s flight does not provoke opportunity attacks while it moves at least 10 feet vertically during its movement.'
-    ]
-  },
-  'Draconic Menace': {
-    name: 'Draconic Menace',
-    description: [
-      'As a bonus action, the pseudodragon projects a threatening aura.',
-      'One creature within 20 feet must succeed on a Wisdom saving throw or have disadvantage on its next attack roll.'
+      'The pseudodragon\'s flight does not provoke opportunity attacks.'
     ]
   },
   'Venom Sense': {
@@ -300,6 +467,63 @@ export const SPECIAL_SKILL_DETAILS = {
     description: [
       'As a bonus action, the pseudodragon becomes invisible until the start of its next turn or until it makes an attack.',
       'Uses equal to proficiency bonus per long rest.'
+    ]
+  },
+  'Draconic Focus': {
+    name: 'Draconic Focus',
+    description: [
+      'Once per long rest, when the pseudodragon forces a saving throw, it can impose disadvantage on that saving throw.'
+    ]
+  },
+  'Empathic Scan': {
+    name: 'Empathic Scan',
+    description: [
+      'As a bonus action, the flumph learns the emotional state and hostile intent of creatures within 30 feet until the start of its next turn.'
+    ]
+  },
+  'Psychic Veil': {
+    name: 'Psychic Veil',
+    description: [
+      'Once per long rest, the flumph and its master become invisible to creatures relying on telepathy, empathy, or psychic senses for 1 minute.'
+    ]
+  },
+  'Hover Guard': {
+    name: 'Hover Guard',
+    description: [
+      'While the flumph is adjacent to its master, the master has advantage on saving throws against charm and fear effects.'
+    ]
+  },
+  'Mental Static': {
+    name: 'Mental Static',
+    description: [
+      'Creatures within 10 feet of the flumph have disadvantage on the first concentration check they make each round.'
+    ]
+  },
+  'Silent Watcher': {
+    name: 'Silent Watcher',
+    description: [
+      'The tressym does not trigger magical alarms, glyphs, or wards while flying, unless it chooses to.'
+    ]
+  },
+  'Arcane Alert': {
+    name: 'Arcane Alert',
+    description: [
+      'As a bonus action, the tressym warns an ally within 30 feet.',
+      'That ally gains advantage on the next saving throw it makes against a spell before the end of its next turn.'
+    ]
+  },
+  'Illusion Sense': {
+    name: 'Illusion Sense',
+    description: [
+      'The tressym automatically knows when it sees an illusion, though it must still act normally to reveal or interact with it.'
+    ]
+  },
+  'Spell Anchor': {
+    name: 'Spell Anchor',
+    description: [
+      'When a creature within 30 feet teleports or uses magical movement, the tressym can use its reaction to mark that creature for 1 minute.',
+      'While marked, the tressym always knows the creature\'s location.',
+      'The mark ends early if the tressym marks another creature or the creature dies.'
     ]
   }
 };

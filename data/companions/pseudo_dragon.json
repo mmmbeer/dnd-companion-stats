@@ -52,14 +52,7 @@
     {
       "name": "Venomous Sting",
       "description": [
-        "The pseudodragon's sting carries potent magical venom.",
-        "A creature that fails its saving throw against this venom falls unconscious as described in the Sting attack."
-      ]
-    },
-    {
-      "name": "Flight",
-      "description": [
-        "The pseudodragon has a flying speed of 60 feet."
+        "The pseudodragon's sting carries potent magical venom capable of incapacitating foes."
       ]
     }
   ],
@@ -94,14 +87,15 @@
     "attacks": [
       "Precision Sting",
       "Wing Buffet",
-      "Venom Mark"
+      "Venom Mark",
+      "Psychic Needle"
     ],
     "specialSkills": [
-      "Silent Glide",
-      "Draconic Menace",
+      "Silent Flight",
       "Venom Sense",
       "Arcane Perch",
-      "Subtle Invisibility"
+      "Subtle Invisibility",
+      "Draconic Focus"
     ]
   }
 }

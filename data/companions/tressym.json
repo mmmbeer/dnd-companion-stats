@@ -1,0 +1,99 @@
+{
+  "id": "tressym",
+  "name": "Tressym",
+  "baseStats": {
+    "abilities": {
+      "str": 6,
+      "dex": 16,
+      "con": 12,
+      "int": 11,
+      "wis": 14,
+      "cha": 13
+    },
+    "armorClass": {
+      "value": 14,
+      "note": "natural agility"
+    },
+    "hitPoints": {
+      "max": 18,
+      "formula": "5d4 + 5"
+    },
+    "speed": 30,
+    "saves": [
+      "dex",
+      "wis"
+    ],
+    "skills": {
+      "perception": "proficient",
+      "stealth": "proficient",
+      "investigation": "proficient"
+    }
+  },
+  "traits": [
+    {
+      "name": "Keen Senses",
+      "description": [
+        "The tressym has advantage on Wisdom (Perception) checks that rely on sight or smell."
+      ]
+    },
+    {
+      "name": "Spell Sense",
+      "description": [
+        "The tressym can sense the presence of magic within 30 feet.",
+        "This sense detects active spells, magical effects, and illusions, but not their exact nature or school."
+      ]
+    },
+    {
+      "name": "Companion Bond",
+      "description": [
+        "The tressym acts on its master's initiative. It obeys verbal commands (no action required).",
+        "If the master is incapacitated, the tressym prioritizes warning allies, evasion, and disrupting hostile spellcasters."
+      ]
+    },
+    {
+      "name": "Feline Agility",
+      "description": [
+        "The tressym can move through a hostile creature's space without provoking opportunity attacks, provided it does not end its movement there."
+      ]
+    }
+  ],
+  "advancement": {
+    "startsAtLevel": 4,
+    "even": {
+      "type": "asi",
+      "maxScore": 20
+    },
+    "odd": {
+      "choices": [
+        "feats",
+        "attacks",
+        "specialSkills"
+      ]
+    }
+  },
+  "baseAttacks": [
+    "Claws"
+  ],
+  "lists": {
+    "feats": [
+      "Spell Sniffer",
+      "Illusion Breaker",
+      "Arcane Interference",
+      "Vigilant Perch",
+      "Nine Lives",
+      "Arcane Tail Lash"
+    ],
+    "attacks": [
+      "Arcane Disrupting Claws",
+      "Wing Slash",
+      "Arcane Pounce",
+      "Spellrake"
+    ],
+    "specialSkills": [
+      "Silent Watcher",
+      "Arcane Alert",
+      "Illusion Sense",
+      "Spell Anchor"
+    ]
+  }
+}

@@ -2,6 +2,8 @@
   "defaultCompanionTypeId": "blink_dog",
   "types": [
     "blink_dog.json",
-    "pseudo_dragon.json"
+    "pseudo_dragon.json",
+    "flumph.json",
+    "tressym.json"
   ]
 }

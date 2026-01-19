@@ -1,0 +1,98 @@
+{
+  "id": "flumph",
+  "name": "Flumph",
+  "baseStats": {
+    "abilities": {
+      "str": 8,
+      "dex": 14,
+      "con": 13,
+      "int": 14,
+      "wis": 15,
+      "cha": 11
+    },
+    "armorClass": {
+      "value": 15,
+      "note": "natural armor"
+    },
+    "hitPoints": {
+      "max": 22,
+      "formula": "5d6 + 5"
+    },
+    "speed": 5,
+    "saves": [
+      "wis",
+      "int"
+    ],
+    "skills": {
+      "insight": "proficient",
+      "perception": "proficient"
+    }
+  },
+  "traits": [
+    {
+      "name": "Telepathic Empathy",
+      "description": [
+        "The flumph can sense the emotional state and hostile intent of creatures within 30 feet."
+      ]
+    },
+    {
+      "name": "Advanced Telepathy",
+      "description": [
+        "The flumph can communicate telepathically with any creature within 60 feet that understands a language."
+      ]
+    },
+    {
+      "name": "Companion Bond",
+      "description": [
+        "The flumph acts on its master's initiative. It obeys verbal commands (no action required).",
+        "If the master is incapacitated, the flumph prioritizes protection, warning allies, and disrupting hostile creatures."
+      ]
+    },
+    {
+      "name": "Hovering Body",
+      "description": [
+        "The flumph can hover. While hovering, it ignores nonmagical difficult terrain and does not provoke opportunity attacks from creatures it flies past."
+      ]
+    }
+  ],
+  "advancement": {
+    "startsAtLevel": 4,
+    "even": {
+      "type": "asi",
+      "maxScore": 20
+    },
+    "odd": {
+      "choices": [
+        "feats",
+        "attacks",
+        "specialSkills"
+      ]
+    }
+  },
+  "baseAttacks": [
+    "Tentacle",
+    "Stench Spray"
+  ],
+  "lists": {
+    "feats": [
+      "Psychic Dampener",
+      "Empathic Shield",
+      "Thought Static",
+      "Aberrant Insight",
+      "Mind Anchor",
+      "Psionic Recoil"
+    ],
+    "attacks": [
+      "Psychic Pulse",
+      "Disorienting Tentacle",
+      "Mind Ripple",
+      "Psychic Rebound"
+    ],
+    "specialSkills": [
+      "Empathic Scan",
+      "Psychic Veil",
+      "Hover Guard",
+      "Mental Static"
+    ]
+  }
+}
