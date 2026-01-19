@@ -14,7 +14,8 @@ export function openModal({
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
   onConfirm,
-  onCancel
+  onCancel,
+  className
 }) {
   const root = ensureModalRoot();
   const overlay = document.createElement('div');
@@ -22,6 +23,9 @@ export function openModal({
 
   const modal = document.createElement('div');
   modal.className = 'modal';
+  if (className) {
+    modal.classList.add(className);
+  }
 
   const header = document.createElement('div');
   header.className = 'modal-header';

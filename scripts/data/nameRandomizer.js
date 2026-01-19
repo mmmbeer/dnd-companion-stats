@@ -1,9 +1,13 @@
 import { BLINK_DOG_NAMES } from '../../data/names/blink-dogs.js';
+import { FLUMPH_NAMES } from '../../data/names/flumph.js';
 import { PSEUDODRAGON_NAMES } from '../../data/names/pseudo-dragons.js';
+import { TRESSYM_NAMES } from '../../data/names/tressym.js';
 
 const NAME_POOLS = new Map([
   ['blink_dog', BLINK_DOG_NAMES],
-  ['pseudo_dragon', PSEUDODRAGON_NAMES]
+  ['pseudo_dragon', PSEUDODRAGON_NAMES],
+  ['flumph', FLUMPH_NAMES],
+  ['tressym', TRESSYM_NAMES]
 ]);
 
 function pickRandomEntry(list) {

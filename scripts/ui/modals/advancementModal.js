@@ -32,6 +32,7 @@ export function openAdvancementModal({
   const modal = openModal({
     title: `Advance ${companionName}`,
     body,
+    className: 'modal-advancement',
     confirmLabel: 'Confirm Advancement',
     cancelLabel: 'Cancel',
     onConfirm: () => {
