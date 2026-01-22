@@ -42,6 +42,36 @@ const SAVING_THROW_FIELD_MAP = {
   cha: 'ST Charisma'
 };
 
+const SAVING_THROW_CHECKBOX_MAP = {
+  str: 'Check Box 11',
+  dex: 'Check Box 18',
+  con: 'Check Box 19',
+  int: 'Check Box 20',
+  wis: 'Check Box 21',
+  cha: 'Check Box 22'
+};
+
+const SKILL_CHECKBOX_MAP = {
+  acrobatics: 'Check Box 23',
+  animalHandling: 'Check Box 24',
+  arcana: 'Check Box 25',
+  athletics: 'Check Box 26',
+  deception: 'Check Box 27',
+  history: 'Check Box 28',
+  insight: 'Check Box 29',
+  intimidation: 'Check Box 30',
+  investigation: 'Check Box 31',
+  medicine: 'Check Box 32',
+  nature: 'Check Box 33',
+  perception: 'Check Box 34',
+  performance: 'Check Box 35',
+  persuasion: 'Check Box 36',
+  religion: 'Check Box 37',
+  sleightOfHand: 'Check Box 38',
+  stealth: 'Check Box 39',
+  survival: 'Check Box 40'
+};
+
 const WEAPON_FIELDS = [
   { name: 'Wpn Name', atk: 'Wpn1 AtkBonus', dmg: 'Wpn1 Damage' },
   { name: 'Wpn Name 2', atk: 'Wpn2 AtkBonus ', dmg: 'Wpn2 Damage ' },
@@ -76,6 +106,22 @@ function sanitizeFilename(value) {
   return `${sanitized}.pdf`;
 }
 
+function setFieldFontSize(form, name, size) {
+  try {
+    const field = form.getTextField(name);
+    field.setFontSize(size);
+  } catch (error) {
+    try {
+      const field = form.getField(name);
+      if (typeof field?.setFontSize === 'function') {
+        field.setFontSize(size);
+      }
+    } catch (innerError) {
+      // Ignore missing fields.
+    }
+  }
+}
+
 function setTextField(form, name, value) {
   if (value === null || value === undefined) return;
   const text = String(value);
@@ -88,6 +134,30 @@ function setTextField(form, name, value) {
       const field = form.getField(name);
       if (typeof field?.setText === 'function') {
         field.setText(text);
+      }
+    } catch (innerError) {
+      // Ignore missing fields.
+    }
+  }
+}
+
+function setCheckField(form, name, checked) {
+  if (!name) return;
+  try {
+    const field = form.getCheckBox(name);
+    if (checked) {
+      field.check();
+    } else {
+      field.uncheck();
+    }
+  } catch (error) {
+    try {
+      const field = form.getField(name);
+      if (!field) return;
+      if (checked && typeof field.check === 'function') {
+        field.check();
+      } else if (!checked && typeof field.uncheck === 'function') {
+        field.uncheck();
       }
     } catch (innerError) {
       // Ignore missing fields.
@@ -158,6 +228,39 @@ function buildFeaturesText(view) {
   return blocks.join('\n\n');
 }
 
+function buildAdvancementHistoryText(view) {
+  const history = view.advancementHistory || {};
+  const entries = Object.entries(history)
+    .map(([level, entry]) => ({
+      level: Number(level),
+      entry
+    }))
+    .filter((item) => Number.isFinite(item.level) && item.entry)
+    .sort((a, b) => a.level - b.level);
+
+  if (!entries.length) return '';
+
+  const lines = ['Advancement History:'];
+  for (const item of entries) {
+    const entry = item.entry || {};
+    let detail = '';
+    if (entry.type === 'asi') {
+      detail = `ASI +1 ${String(entry.ability || '').toUpperCase()}`;
+    } else if (entry.type === 'feat') {
+      detail = `Feat — ${entry.value || ''}`;
+    } else if (entry.type === 'attack') {
+      detail = `Attack — ${entry.value || ''}`;
+    } else if (entry.type === 'specialSkill') {
+      detail = `Special Skill — ${entry.value || ''}`;
+    } else if (entry.type) {
+      detail = `${entry.type} — ${entry.value || ''}`;
+    }
+    lines.push(`Level ${item.level}: ${detail}`.trim());
+  }
+
+  return lines.join('\n');
+}
+
 function buildAttacksText(view) {
   const actions = view.features?.actions || [];
   if (!actions.length) return '';
@@ -177,6 +280,10 @@ function setSkillFields(form, view) {
     const fieldName = SKILL_FIELD_MAP[skill.key];
     if (!fieldName) continue;
     setTextField(form, fieldName, formatSigned(skill.bonus));
+    const checkboxName = SKILL_CHECKBOX_MAP[skill.key];
+    if (checkboxName) {
+      setCheckField(form, checkboxName, skill.proficient || skill.expertise);
+    }
   }
 }
 
@@ -185,6 +292,10 @@ function setSavingThrowFields(form, view) {
     const fieldName = SAVING_THROW_FIELD_MAP[save.key];
     if (!fieldName) continue;
     setTextField(form, fieldName, formatSigned(save.total));
+    const checkboxName = SAVING_THROW_CHECKBOX_MAP[save.key];
+    if (checkboxName) {
+      setCheckField(form, checkboxName, save.proficient);
+    }
   }
 }
 
@@ -262,16 +373,23 @@ export async function exportCompanionToPdf({ state, companion, companionType }) 
 
   const featuresText = buildFeaturesText(view);
   if (featuresText) {
+    setFieldFontSize(form, 'Features and Traits', 10);
     setTextField(form, 'Features and Traits', featuresText);
-    setTextField(form, 'Feat+Traits', featuresText);
   }
 
   const attacksText = buildAttacksText(view);
   if (attacksText) {
+    setFieldFontSize(form, 'AttacksSpellcasting', 10);
     setTextField(form, 'AttacksSpellcasting', attacksText);
   }
 
   setAttackFields(form, view);
+
+  const advancementText = buildAdvancementHistoryText(view);
+  if (advancementText) {
+    setFieldFontSize(form, 'Feat+Traits', 10);
+    setTextField(form, 'Feat+Traits', advancementText);
+  }
 
   if (Number.isFinite(view.saveDc)) {
     setTextField(form, 'SpellSaveDC  2', formatNumber(view.saveDc));
