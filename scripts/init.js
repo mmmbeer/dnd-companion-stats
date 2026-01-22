@@ -26,6 +26,7 @@ import { renderEmptyState } from './ui/renderEmptyState.js';
 import { openAddCompanionModal } from './ui/modals/addCompanionModal.js';
 import { openAdvancementModal } from './ui/modals/advancementModal.js';
 import { getRandomCompanionName } from './data/nameRandomizer.js';
+import { exportCompanionToPdf } from './ui/exportPdf.js';
 
 const THEMES = [
   { id: 'arcane-midnight', label: 'Arcane Midnight' },
@@ -56,6 +57,8 @@ let sheetBody = null;
 let topbarTitle = null;
 let companionTypeSelect = null;
 let settingsButton = null;
+let exportPdfButton = null;
+let isExportingPdf = false;
 
 function render() {
   const companion = getActiveCompanion(state);
@@ -319,6 +322,9 @@ function renderCompanionRoster() {
   if (levelUpButton) {
     levelUpButton.disabled = !hasCompanions;
   }
+  if (exportPdfButton) {
+    exportPdfButton.disabled = !hasCompanions || isExportingPdf;
+  }
   deleteCompanionButton.disabled = companions.length <= 1;
 
   if (hasCompanions) {
@@ -533,6 +539,7 @@ function setupCompanionControls() {
   sheetBody = document.querySelector('.sheet-body');
   topbarTitle = document.getElementById('topbarTitle');
   settingsButton = document.getElementById('openSettings');
+  exportPdfButton = document.getElementById('exportPdf');
 
   populateCompanionTypeOptions();
 
@@ -595,6 +602,38 @@ function setupCompanionControls() {
         companionType,
         activeCompanion.playerLevel
       );
+    };
+  }
+
+  if (exportPdfButton) {
+    exportPdfButton.onclick = async () => {
+      if (isExportingPdf) return;
+      const activeCompanion = getActiveCompanion(state);
+      if (!activeCompanion) return;
+      const companionType = getCompanionType(activeCompanion.type);
+      if (!companionType) return;
+      isExportingPdf = true;
+      exportPdfButton.disabled = true;
+      const label = exportPdfButton.querySelector('.button-label');
+      const previousLabel = label ? label.textContent : '';
+      if (label) {
+        label.textContent = 'Exporting...';
+      }
+      try {
+        await exportCompanionToPdf({
+          state,
+          companion: activeCompanion,
+          companionType
+        });
+      } catch (error) {
+        console.error('PDF export failed.', error);
+      } finally {
+        isExportingPdf = false;
+        if (label) {
+          label.textContent = previousLabel;
+        }
+        exportPdfButton.disabled = false;
+      }
     };
   }
 
