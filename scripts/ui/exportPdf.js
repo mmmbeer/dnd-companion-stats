@@ -128,17 +128,20 @@ function setTextField(form, name, value, fontSize = DEFAULT_TEXT_FONT_SIZE) {
   if (value === null || value === undefined) return;
   const text = String(value);
   if (!text) return;
-  if (Number.isFinite(fontSize)) {
-    setFieldFontSize(form, name, fontSize);
-  }
   try {
     const field = form.getTextField(name);
     field.setText(text);
+    if (Number.isFinite(fontSize)) {
+      field.setFontSize(fontSize);
+    }
   } catch (error) {
     try {
       const field = form.getField(name);
       if (typeof field?.setText === 'function') {
         field.setText(text);
+      }
+      if (Number.isFinite(fontSize) && typeof field?.setFontSize === 'function') {
+        field.setFontSize(fontSize);
       }
     } catch (innerError) {
       // Ignore missing fields.
