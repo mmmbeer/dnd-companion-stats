@@ -1,4 +1,8 @@
 import { abilityMod } from './abilities.js';
+import {
+  normalizePrerequisiteFeatureName,
+  parseFeaturePrerequisites
+} from './featurePrerequisites.js';
 
 export const ABILITY_ORDER = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
@@ -18,6 +22,25 @@ function listNames(list) {
   return list
     .map((entry) => (typeof entry === 'string' ? entry : entry?.name))
     .filter(Boolean);
+}
+
+function normalizeFeatureEntries(list) {
+  if (!Array.isArray(list)) return [];
+  return list
+    .map((entry) => {
+      if (typeof entry === 'string') {
+        return { name: entry, description: [] };
+      }
+      if (entry && typeof entry === 'object' && typeof entry.name === 'string') {
+        return {
+          name: entry.name,
+          description: Array.isArray(entry.description) ? entry.description : [],
+          prerequisites: Array.isArray(entry.prerequisites) ? entry.prerequisites : undefined
+        };
+      }
+      return null;
+    })
+    .filter((entry) => entry && entry.name);
 }
 
 export function getAbilityScores(companion, companionType) {
@@ -50,7 +73,64 @@ export function getAbilityScores(companion, companionType) {
 export function getKnownFeats(companion, companionType) {
   const overrides = companion.overrides?.feats || [];
   const fromHistory = listFromHistory(companion.advancementHistory, 'feat');
-  return Array.from(new Set([...overrides, ...fromHistory]));
+  const rawKnownFeats = Array.from(new Set([...overrides, ...fromHistory]));
+  if (!rawKnownFeats.length) return rawKnownFeats;
+
+  const playerLevel = Number(companion.playerLevel) || 1;
+  const knownAttacks = getKnownAttacks(companion, companionType);
+  const knownSpecialSkills = getKnownSpecialSkills(companion, companionType);
+  const knownBaseTraits = listNames(companionType.traits || []);
+
+  const knownNonFeatNames = new Set(
+    [...knownAttacks, ...knownSpecialSkills, ...knownBaseTraits].map((name) =>
+      normalizePrerequisiteFeatureName(name)
+    )
+  );
+
+  const featEntries = normalizeFeatureEntries(companionType.lists?.feats || []);
+  const featByName = new Map(featEntries.map((entry) => [entry.name, entry]));
+  const unresolved = new Set(rawKnownFeats);
+  const resolved = [];
+  let changed = true;
+
+  while (changed) {
+    changed = false;
+    for (const featName of Array.from(unresolved)) {
+      const featEntry = featByName.get(featName);
+      if (!featEntry) {
+        resolved.push(featName);
+        unresolved.delete(featName);
+        changed = true;
+        continue;
+      }
+      const prerequisites = parseFeaturePrerequisites(featEntry);
+      let eligible = true;
+      for (const prerequisite of prerequisites) {
+        if (prerequisite.type === 'level') {
+          if (playerLevel < prerequisite.value) {
+            eligible = false;
+            break;
+          }
+          continue;
+        }
+        if (prerequisite.type === 'feature') {
+          const requirement = normalizePrerequisiteFeatureName(prerequisite.value);
+          const hasFeature = knownNonFeatNames.has(requirement) || resolved.includes(requirement);
+          if (!hasFeature) {
+            eligible = false;
+            break;
+          }
+        }
+      }
+      if (eligible) {
+        resolved.push(featName);
+        unresolved.delete(featName);
+        changed = true;
+      }
+    }
+  }
+
+  return resolved;
 }
 
 export function getKnownAttacks(companion, companionType) {

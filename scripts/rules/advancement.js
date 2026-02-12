@@ -4,6 +4,10 @@ import {
   getKnownFeats,
   getKnownSpecialSkills
 } from './companion.js';
+import {
+  normalizePrerequisiteFeatureName,
+  parseFeaturePrerequisites
+} from './featurePrerequisites.js';
 
 const CATEGORY_TO_ACTION = {
   feats: 'feat',
@@ -36,6 +40,39 @@ function normalizeFeatureEntries(list) {
       return null;
     })
     .filter((entry) => entry && entry.name);
+}
+
+function getKnownFeatureNameSet(companion, companionType) {
+  const known = new Set();
+  const baseTraitNames = normalizeFeatureEntries(companionType.traits || []).map(
+    (entry) => entry.name
+  );
+  const knownFeats = getKnownFeats(companion, companionType);
+  const knownAttacks = getKnownAttacks(companion, companionType);
+  const knownSpecialSkills = getKnownSpecialSkills(companion, companionType);
+  for (const name of [...baseTraitNames, ...knownFeats, ...knownAttacks, ...knownSpecialSkills]) {
+    const normalized = normalizePrerequisiteFeatureName(name);
+    if (normalized) known.add(normalized);
+  }
+  return known;
+}
+
+function isFeatOptionEligible(companion, companionType, playerLevel, option) {
+  const prerequisites = parseFeaturePrerequisites(option);
+  if (!prerequisites.length) return true;
+  const knownFeatures = getKnownFeatureNameSet(companion, companionType);
+  for (const prerequisite of prerequisites) {
+    if (prerequisite.type === 'level') {
+      if (playerLevel < prerequisite.value) {
+        return false;
+      }
+      continue;
+    }
+    if (prerequisite.type === 'feature' && !knownFeatures.has(prerequisite.value)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 function getAdvancementDefinition(companionType, playerLevel) {
@@ -122,7 +159,11 @@ export function getAdvancementContext(companion, companionType, playerLevel) {
         : category === 'attacks'
         ? knownAttacks
         : knownSpecialSkills;
-    choices[category] = list.filter((option) => !known.includes(option.name));
+    choices[category] = list.filter((option) => {
+      if (known.includes(option.name)) return false;
+      if (category !== 'feats') return true;
+      return isFeatOptionEligible(companion, companionType, playerLevel, option);
+    });
   }
 
   const hasOptions = Object.values(choices).some((list) => list.length > 0);
@@ -168,6 +209,12 @@ export function applyAdvancement(companion, companionType, playerLevel, action) 
   const availableNames = available.map((entry) => entry.name);
   if (!availableNames.includes(action.value)) {
     return { ok: false, error: 'Advancement choice not available.' };
+  }
+  if (action.type === 'feat') {
+    const selected = available.find((entry) => entry.name === action.value);
+    if (!selected || !isFeatOptionEligible(companion, companionType, playerLevel, selected)) {
+      return { ok: false, error: 'Feat prerequisites not met.' };
+    }
   }
   return { ok: true, entry: action };
 }
