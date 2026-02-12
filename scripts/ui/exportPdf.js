@@ -2,6 +2,8 @@ import { buildCompanionView } from '../rules/view.js';
 
 const PDF_URL = new URL('../../docs/5E_CharacterSheet_Fillable.pdf', import.meta.url);
 const DEFAULT_EXPORT_NAME = 'companion-character-sheet.pdf';
+const DEFAULT_TEXT_FONT_SIZE = 10;
+const MULTILINE_TEXT_FONT_SIZE = 9;
 
 const ABILITY_FIELD_MAP = {
   str: { score: 'STR', mod: 'STRmod' },
@@ -122,10 +124,13 @@ function setFieldFontSize(form, name, size) {
   }
 }
 
-function setTextField(form, name, value) {
+function setTextField(form, name, value, fontSize = DEFAULT_TEXT_FONT_SIZE) {
   if (value === null || value === undefined) return;
   const text = String(value);
   if (!text) return;
+  if (Number.isFinite(fontSize)) {
+    setFieldFontSize(form, name, fontSize);
+  }
   try {
     const field = form.getTextField(name);
     field.setText(text);
@@ -247,13 +252,13 @@ function buildAdvancementHistoryText(view) {
     if (entry.type === 'asi') {
       detail = `ASI +1 ${String(entry.ability || '').toUpperCase()}`;
     } else if (entry.type === 'feat') {
-      detail = `Feat — ${entry.value || ''}`;
+      detail = `Feat - ${entry.value || ''}`;
     } else if (entry.type === 'attack') {
-      detail = `Attack — ${entry.value || ''}`;
+      detail = `Attack - ${entry.value || ''}`;
     } else if (entry.type === 'specialSkill') {
-      detail = `Special Skill — ${entry.value || ''}`;
+      detail = `Special Skill - ${entry.value || ''}`;
     } else if (entry.type) {
-      detail = `${entry.type} — ${entry.value || ''}`;
+      detail = `${entry.type} - ${entry.value || ''}`;
     }
     lines.push(`Level ${item.level}: ${detail}`.trim());
   }
@@ -373,22 +378,19 @@ export async function exportCompanionToPdf({ state, companion, companionType }) 
 
   const featuresText = buildFeaturesText(view);
   if (featuresText) {
-    setFieldFontSize(form, 'Features and Traits', 10);
-    setTextField(form, 'Features and Traits', featuresText);
+    setTextField(form, 'Features and Traits', featuresText, MULTILINE_TEXT_FONT_SIZE);
   }
 
   const attacksText = buildAttacksText(view);
   if (attacksText) {
-    setFieldFontSize(form, 'AttacksSpellcasting', 10);
-    setTextField(form, 'AttacksSpellcasting', attacksText);
+    setTextField(form, 'AttacksSpellcasting', attacksText, MULTILINE_TEXT_FONT_SIZE);
   }
 
   setAttackFields(form, view);
 
   const advancementText = buildAdvancementHistoryText(view);
   if (advancementText) {
-    setFieldFontSize(form, 'Feat+Traits', 10);
-    setTextField(form, 'Feat+Traits', advancementText);
+    setTextField(form, 'Feat+Traits', advancementText, MULTILINE_TEXT_FONT_SIZE);
   }
 
   if (Number.isFinite(view.saveDc)) {

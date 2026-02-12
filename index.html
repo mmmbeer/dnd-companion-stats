@@ -27,10 +27,33 @@
               <span class="icon icon-trash" aria-hidden="true"></span>
             </button>
           </div>
-          <button id="exportPdf" type="button" class="button-secondary button-icon" title="Export to PDF" aria-label="Export to PDF">
+          <div id="exportMenu" class="topbar-menu">
+            <button
+              id="exportMenuButton"
+              type="button"
+              class="button-secondary button-icon"
+              title="Export"
+              aria-label="Export"
+              aria-haspopup="menu"
+              aria-expanded="false"
+            >
+              <span class="icon icon-exchange" aria-hidden="true"></span>
+              <span class="button-label">Export</span>
+            </button>
+            <div class="dropdown-menu" role="menu" aria-label="Export options">
+              <button id="exportPdf" type="button" class="button-secondary dropdown-item" role="menuitem">
+                PDF Sheet
+              </button>
+              <button id="exportJson" type="button" class="button-secondary dropdown-item" role="menuitem">
+                JSON
+              </button>
+            </div>
+          </div>
+          <button id="importJsonButton" type="button" class="button-secondary button-icon">
             <span class="icon icon-exchange" aria-hidden="true"></span>
-            <span class="button-label">Export PDF</span>
+            <span class="button-label">Import</span>
           </button>
+          <input id="importJsonInput" type="file" accept="application/json,.json" class="is-hidden">
           <button id="openSettings" type="button" class="button-secondary button-icon button-icon-only" title="Settings" aria-label="Settings">
             <span class="icon icon-settings" aria-hidden="true"></span>
           </button>

@@ -468,6 +468,38 @@ button:disabled {
   align-items: center;
 }
 
+.topbar-menu {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  display: none;
+  min-width: 10rem;
+  padding: var(--space-1);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  z-index: 20;
+}
+
+.topbar-menu:hover .dropdown-menu,
+.topbar-menu:focus-within .dropdown-menu,
+.topbar-menu.is-open .dropdown-menu {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.dropdown-item {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-start;
+  text-align: left;
+  border-radius: var(--radius-card);
+}
+
 .stats-table {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));

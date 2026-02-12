@@ -7,7 +7,11 @@ import {
 import { loadState, saveState } from './core/storage.js';
 import { validateState } from './core/validation.js';
 import { loadCompanionTypes } from './companions/loader.js';
-import { getCompanionType, listCompanionTypes } from './companions/registry.js';
+import {
+  getCompanionType,
+  listCompanionTypes,
+  validateCompanionInstanceWithRegistry
+} from './companions/registry.js';
 import {
   applyAdvancement,
   getAdvancementContext,
@@ -27,6 +31,8 @@ import { openAddCompanionModal } from './ui/modals/addCompanionModal.js';
 import { openAdvancementModal } from './ui/modals/advancementModal.js';
 import { getRandomCompanionName } from './data/nameRandomizer.js';
 import { exportCompanionToPdf } from './ui/exportPdf.js';
+import { exportCompanionToJson } from './ui/exportJson.js';
+import { readCompanionImportFile } from './ui/importJson.js';
 
 const THEMES = [
   { id: 'arcane-midnight', label: 'Arcane Midnight' },
@@ -57,8 +63,15 @@ let sheetBody = null;
 let topbarTitle = null;
 let companionTypeSelect = null;
 let settingsButton = null;
+let exportMenu = null;
+let exportMenuButton = null;
 let exportPdfButton = null;
+let exportJsonButton = null;
+let importJsonButton = null;
+let importJsonInput = null;
 let isExportingPdf = false;
+let isExportingJson = false;
+let isImportingJson = false;
 
 function render() {
   const companion = getActiveCompanion(state);
@@ -159,6 +172,25 @@ function ensureActiveCompanion() {
   if (!state.activeCompanionId || !state.companions[state.activeCompanionId]) {
     state.activeCompanionId = companionIds[0];
   }
+}
+
+function setExportMenuOpen(isOpen) {
+  if (!exportMenu) return;
+  exportMenu.classList.toggle('is-open', isOpen);
+  if (exportMenuButton) {
+    exportMenuButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+}
+
+function showImportError(error) {
+  const reason = error instanceof Error ? error.message : String(error || 'Unknown import error.');
+  openConfirmModal({
+    title: 'Import Failed',
+    message: reason,
+    confirmLabel: 'OK',
+    cancelLabel: 'Close',
+    onConfirm: () => {}
+  });
 }
 
 function formatCompanionOption(companion) {
@@ -322,8 +354,21 @@ function renderCompanionRoster() {
   if (levelUpButton) {
     levelUpButton.disabled = !hasCompanions;
   }
+  const isExportDisabled = !hasCompanions || isExportingPdf || isExportingJson;
+  if (exportMenuButton) {
+    exportMenuButton.disabled = isExportDisabled;
+    if (isExportDisabled) {
+      setExportMenuOpen(false);
+    }
+  }
   if (exportPdfButton) {
-    exportPdfButton.disabled = !hasCompanions || isExportingPdf;
+    exportPdfButton.disabled = isExportDisabled;
+  }
+  if (exportJsonButton) {
+    exportJsonButton.disabled = isExportDisabled;
+  }
+  if (importJsonButton) {
+    importJsonButton.disabled = isImportingJson;
   }
   deleteCompanionButton.disabled = companions.length <= 1;
 
@@ -539,7 +584,12 @@ function setupCompanionControls() {
   sheetBody = document.querySelector('.sheet-body');
   topbarTitle = document.getElementById('topbarTitle');
   settingsButton = document.getElementById('openSettings');
+  exportMenu = document.getElementById('exportMenu');
+  exportMenuButton = document.getElementById('exportMenuButton');
   exportPdfButton = document.getElementById('exportPdf');
+  exportJsonButton = document.getElementById('exportJson');
+  importJsonButton = document.getElementById('importJsonButton');
+  importJsonInput = document.getElementById('importJsonInput');
 
   populateCompanionTypeOptions();
 
@@ -605,20 +655,34 @@ function setupCompanionControls() {
     };
   }
 
+  if (exportMenuButton && exportMenu) {
+    exportMenuButton.onclick = () => {
+      if (exportMenuButton.disabled) return;
+      const isOpen = exportMenu.classList.contains('is-open');
+      setExportMenuOpen(!isOpen);
+    };
+    document.addEventListener('click', (event) => {
+      if (!exportMenu.contains(event.target)) {
+        setExportMenuOpen(false);
+      }
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        setExportMenuOpen(false);
+      }
+    });
+  }
+
   if (exportPdfButton) {
     exportPdfButton.onclick = async () => {
-      if (isExportingPdf) return;
+      if (isExportingPdf || isExportingJson) return;
       const activeCompanion = getActiveCompanion(state);
       if (!activeCompanion) return;
       const companionType = getCompanionType(activeCompanion.type);
       if (!companionType) return;
+      setExportMenuOpen(false);
       isExportingPdf = true;
-      exportPdfButton.disabled = true;
-      const label = exportPdfButton.querySelector('.button-label');
-      const previousLabel = label ? label.textContent : '';
-      if (label) {
-        label.textContent = 'Exporting...';
-      }
+      renderCompanionRoster();
       try {
         await exportCompanionToPdf({
           state,
@@ -629,10 +693,75 @@ function setupCompanionControls() {
         console.error('PDF export failed.', error);
       } finally {
         isExportingPdf = false;
-        if (label) {
-          label.textContent = previousLabel;
+        renderCompanionRoster();
+      }
+    };
+  }
+
+  if (exportJsonButton) {
+    exportJsonButton.onclick = () => {
+      if (isExportingPdf || isExportingJson) return;
+      const activeCompanion = getActiveCompanion(state);
+      if (!activeCompanion) return;
+      setExportMenuOpen(false);
+      isExportingJson = true;
+      renderCompanionRoster();
+      try {
+        exportCompanionToJson(activeCompanion);
+      } catch (error) {
+        console.error('JSON export failed.', error);
+      } finally {
+        isExportingJson = false;
+        renderCompanionRoster();
+      }
+    };
+  }
+
+  if (importJsonButton && importJsonInput) {
+    importJsonButton.onclick = () => {
+      if (isImportingJson) return;
+      importJsonInput.value = '';
+      importJsonInput.click();
+    };
+
+    importJsonInput.onchange = async () => {
+      const file = importJsonInput.files?.[0];
+      if (!file) return;
+      isImportingJson = true;
+      renderCompanionRoster();
+      try {
+        const importedData = await readCompanionImportFile(file);
+        const nextId = getNextCompanionId(state);
+        const importedCompanion = {
+          id: nextId,
+          type: importedData.type,
+          name: importedData.name,
+          playerLevel: importedData.playerLevel,
+          advancementHistory: importedData.advancementHistory,
+          overrides: importedData.overrides
+        };
+        if (importedData.health) {
+          importedCompanion.health = importedData.health;
         }
-        exportPdfButton.disabled = false;
+        const instanceValidation = validateCompanionInstanceWithRegistry(importedCompanion);
+        if (!instanceValidation.ok) {
+          throw new Error(instanceValidation.errors.join(' '));
+        }
+        const draft = structuredClone(state);
+        draft.companions[nextId] = importedCompanion;
+        draft.activeCompanionId = nextId;
+        const stateValidation = validateState(draft);
+        if (!stateValidation.ok) {
+          throw new Error(stateValidation.errors.join(' '));
+        }
+        state = draft;
+        render();
+      } catch (error) {
+        console.error('JSON import failed.', error);
+        showImportError(error);
+      } finally {
+        isImportingJson = false;
+        renderCompanionRoster();
       }
     };
   }
