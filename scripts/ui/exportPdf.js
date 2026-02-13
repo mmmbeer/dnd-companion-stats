@@ -340,6 +340,11 @@ export async function exportCompanionToPdf({ state, companion, companionType }) 
   const pdfBytes = await response.arrayBuffer();
   const pdfDoc = await PDFDocument.load(pdfBytes);
   const form = pdfDoc.getForm();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+  // Initialize form appearances once; avoid a second global pass that can override
+  // explicit per-field font sizes with auto-sizing behavior.
+  form.updateFieldAppearances(font);
 
   const armorClass = extractArmorClassValue(view.stats?.armorClass);
   const dexAbility = view.abilities?.find((ability) => ability.key === 'dex');
@@ -404,9 +409,6 @@ export async function exportCompanionToPdf({ state, companion, companionType }) 
     setTextField(form, 'SpellcastingAbility 2', 'DEX');
     setTextField(form, 'Spellcasting Class 2', 'Fey');
   }
-
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  form.updateFieldAppearances(font);
 
   const filledBytes = await pdfDoc.save();
   const blob = new Blob([filledBytes], { type: 'application/pdf' });
